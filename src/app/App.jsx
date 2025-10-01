@@ -1,8 +1,16 @@
-import { useState } from 'react'
-import './ui/App.css'
-
-function App() {
-  return <h1>Hello Ghost!</h1>;
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Layout from './ui/Layout';
+import Home from '../pages/home/Home';
+import Privacy from '../pages/privacy/privacy';
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="privacy" element={<Privacy />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App
