@@ -1,6 +1,8 @@
 import { Link, Outlet } from "react-router-dom";
 import './Layout.css';
 import Base64 from "../../shared/base64/Base64";
+import { useContext, useRef } from "react";
+import AppContext from "../../features/appContext/AppContext";
 export default function Layout() {
     return <>
         <header>
@@ -54,6 +56,8 @@ export default function Layout() {
 }
 
 function AuthModal(){
+    const {token,setToken}=useContext(AppContext);
+    const closeButtonRef = useRef(null);
     const onAuthSubmit = e =>
     {
     e.preventDefault();
@@ -70,59 +74,16 @@ function AuthModal(){
             'Authorization': 'Basic ' + credentials
         }
       })
-      .then(r=>r.json())
-      .then(console.log);
+      .then(r=>r.text())
+      .then(jwt=>{
+        console.log(jwt);
+        setToken(jwt);
+     closeButtonRef.current.click();
+    });
     };
 
 
-    const onPost= () =>{
-         fetch("http://localhost:8080/JavaWeb222/user",{
-        method:'POST',
-        headers:{
-            'Authorization': 'Basic 123 ' ,
-            'Content-Type' : "application/json"
-        }
-      })
-      .then(r=>r.json())
-      .then(console.log);
-    };
-
-
-     const onPut= () =>{
-         fetch("http://localhost:8080/JavaWeb222/user",{
-        method:'PUT',
-        headers:{
-            'Authorization': 'Basic 123 ' ,
-            'Content-Type' : "application/json"
-        }
-      })
-      .then(r=>r.json())
-      .then(console.log);
-    };
-
-    const onDelete = () => {
-        fetch("http://localhost:8080/JavaWeb222/user",{
-            method:'DELETE',
-            headers:{
-                'Authorization': 'Basic 123',
-                'Content-Type' : "application/json"
-            }
-        })
-        .then(r=>r.json())
-        .then(console.log);
-    };
-
-    const onPatch = () => {
-        fetch("http://localhost:8080/JavaWeb222/user",{
-            method:'PATCH',
-            headers:{
-                'Authorization': 'Basic 123',
-                'Content-Type' : "application/json"
-            }
-        })
-        .then(r=>r.json())
-        .then(console.log);
-    };
+  
 
    return (
        <div className="modal fade" id="authModal" tabIndex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
@@ -146,13 +107,9 @@ function AuthModal(){
                     </form>
                 </div>
                 <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button ref = {closeButtonRef} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
                   <button type="submit" form="auth-form" className="btn btn-primary">Вхід(GET)</button>
-                      <button onClick={onPost} type="button" className="btn btn-success">POST</button>
-                      <button onClick={onPut} type="button" className="btn btn-warning">PUT</button>
-                      <button onClick={onDelete} type="button" className="btn btn-danger">DELETE</button>
-                      <button onClick={onPatch} type="button" className="btn btn-info">PATCH</button>
-                </div>
+                  </div>
                 </div>
             </div>
         </div>
