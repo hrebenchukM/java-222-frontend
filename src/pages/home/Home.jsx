@@ -138,8 +138,7 @@ const invalid7 = () => {
         Authorizatoin: "Bearer 1.2.3", 
       },
     })
-      .then((r) => r.json())
-      .then((j) => setContent(JSON.stringify(j)));
+      .then((r) => r.json()).then((j) => setContent(JSON.stringify(j)));
   };
   
    const invalid8 = () => {
@@ -149,10 +148,9 @@ const invalid7 = () => {
         Authorization: "Bearer    1.2.3",
       },
     })
-      .then((r) => r.json())
-      .then((j) => setContent(JSON.stringify(j)));
+      .then((r) => r.json()).then((j) => setContent(JSON.stringify(j)));
   };
-  
+
   return (
     <>
       <h1>Home page</h1>
