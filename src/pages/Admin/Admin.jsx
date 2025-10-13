@@ -1,8 +1,23 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import AppContext from "../../features/appContext/AppContext";
 
 export default function Admin(){
     const {token} = useContext(AppContext);
+  const [groups, setGroups] = useState([]);
+
+useEffect(() => {
+    if(token){
+    fetch("http://localhost:8080/JavaWeb222/admin/groups", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token
+        },
+    })
+    .then(r => r.json())
+    .then(setGroups);
+}
+}, [token]);
+
     const onGroupFormSubmit = e =>{
         e.preventDefault();
         fetch("http://localhost:8080/JavaWeb222/admin/group",{
@@ -78,10 +93,10 @@ export default function Admin(){
      <div className="input-group mb-3">
     <label className="input-group-text" htmlFor="inputGroupSelect01">Підлеглість</label>
     <select className="form-select" id="inputGroupSelect01" name="pg-parent-id">
-        <option selected>Choose...</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
+    
+        <option value="1">Без підлеглості</option>
+        {groups.map(g=> <option  key = {g.id} value={g.id}>{g.name}</option>)}
+       
         </select>
      </div>
               </div>
