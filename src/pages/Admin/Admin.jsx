@@ -25,6 +25,8 @@ export default function Admin() {
 
     const onProductFormSubmit = e => {
         e.preventDefault();
+        const error = document.getElementById("product-error");
+        error.innerText = "";
         fetch("http://localhost:8080/JavaWeb222/admin/product", {
             method: "POST",
             headers: {
@@ -40,7 +42,7 @@ export default function Admin() {
                         alert("Товар додано");
                     }
                     else {
-                        alert(j);
+                         error.innerText = j;
                     }
                 });
             }
@@ -222,6 +224,7 @@ export default function Admin() {
                         </div>
                     </div>
                     <div className="col">
+                        <div id="product-error" className="text-danger mb-2"></div>
                         <button type="submit" className="btn btn-primary">Додати</button>
                     </div>
                 </div>
