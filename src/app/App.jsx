@@ -1,25 +1,23 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './ui/Layout';
 import Home from '../pages/home/Home';
-import Privacy from '../pages/privacy/privacy';
+import Privacy from '../pages/privacy/Privacy';
 import { useState } from 'react';
 import AppContext from '../features/appContext/AppContext';
-import Admin from '../pages/Admin/Admin';
+import Admin from '../pages/admin/Admin';
 
 export default function App() {
-  const [token,setToken] = useState(null);
+  const [token, setToken] = useState(null);
 
-  return (
-    <AppContext.Provider value = {{token,setToken}}>
+  return <AppContext.Provider value={{token, setToken}}>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout />}>
+        <Route path='/' element={<Layout/>}>
           <Route index element={<Home />} />
-             <Route path="admin" element={<Admin />} />
-             <Route path="privacy" element={<Privacy />} />
+          <Route path='admin' element={<Admin />} />
+          <Route path='privacy' element={<Privacy />} />
         </Route>
       </Routes>
     </BrowserRouter>
-    </AppContext.Provider>
-  );
+  </AppContext.Provider>;
 }

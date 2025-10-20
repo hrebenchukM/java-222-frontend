@@ -3,8 +3,10 @@ import './Layout.css';
 import Base64 from "../../shared/base64/Base64";
 import { useContext, useRef } from "react";
 import AppContext from "../../features/appContext/AppContext";
+
 export default function Layout() {
-    const {token,setToken} = useContext(AppContext);
+    const {token, setToken} = useContext(AppContext);
+
     return <>
         <header>
             <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom">
@@ -22,7 +24,7 @@ export default function Layout() {
                                 <li className="nav-item">
                                     <Link className="nav-link active" to="/privacy">Privacy</Link>
                                 </li>
-                                {!!token &&   <li className="nav-item">
+                                {!!token && <li className="nav-item">
                                     <Link className="nav-link active" to="/admin">Admin</Link>
                                 </li>}
                             </ul>
@@ -31,13 +33,13 @@ export default function Layout() {
                                 <button className="btn btn-outline-success" type="submit">Search</button>
                             </form>
                             <div>
-                              {!token
-                                ? <button className="btn btn-outline-secondary"
+                                {!token 
+                                ? <button className="btn btn-outline-secondary" 
                                         data-bs-toggle="modal" data-bs-target="#authModal">
                                     <i className="bi bi-box-arrow-in-right"></i>
                                   </button>
                                 : <button className="btn btn-outline-secondary" 
-                                          onClick={()=>setToken(null)}>
+                                          onClick={() => setToken(null)}>
                                     <i className="bi bi-box-arrow-right"></i>
                                   </button>
                                 }
@@ -60,50 +62,43 @@ export default function Layout() {
             </div>
         </footer>
 
-<AuthModal></AuthModal>
-
+        <AuthModal />        
     </>;
 }
 
-function AuthModal(){
-    const {token,setToken}=useContext(AppContext);
-    const closeButtonRef = useRef(null);
-    const onAuthSubmit = e =>
-    {
-    e.preventDefault();
-    const formData=new FormData(e.target);
-    const login = formData.get("auth-login");
-      const password = formData.get("auth-password");
-      console.log(login,password);
-      //RFC 7617
-      const userPass=login +':' + password;
-      const credentials = Base64.encode(userPass);
-      fetch("http://localhost:8080/JavaWeb222/user",{
-        method:'GET',
-        headers:{
-            'Authorization': 'Basic ' + credentials
-        }
-      })
-      .then(r=>{
-        if(r.status ==200){ 
-         r.text().then(jwt=>{
-        console.log(jwt);
-        setToken(jwt);
-        closeButtonRef.current.click();
-       });
-        }
-        else{
-        console.error("У вході відмовлено");
-        }
-       })
-       
+function AuthModal() {
+    const {token, setToken} = useContext(AppContext);
+    const closeButtonRef = useRef();
+
+    const onAuthSubmit = e => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const login = formData.get("auth-login");
+        const password = formData.get("auth-password");
+        console.log(login, password);
+        // RFC 7617
+        const userPass = login + ':' + password;
+        const credentials = Base64.encode(userPass);
+        fetch("http://localhost:8080/JavaWeb222/user", {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + credentials,
+            }
+        }).then(r => {
+            if(r.status == 200) {
+                r.text().then(jwt => {
+                    console.log(jwt);
+                    setToken(jwt);
+                    closeButtonRef.current.click();
+                });
+            }
+            else {
+                console.error("У вході відмовлено");
+            }
+        });
     };
 
-
-  
-
-   return (
-       <div className="modal fade" id="authModal" tabIndex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    return <div className="modal fade" id="authModal" tabIndex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
             <div className="modal-dialog">
                 <div className="modal-content">
                 <div className="modal-header">
@@ -111,7 +106,7 @@ function AuthModal(){
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">
-                    <form onSubmit={onAuthSubmit} id = "auth-form">
+                    <form onSubmit={onAuthSubmit} id="auth-form">
                         <div className="input-group mb-3">
                             <span className="input-group-text" id="login-addon"><i className="bi bi-key"></i></span>
                             <input name="auth-login" type="text" className="form-control" placeholder="Логін" aria-label="Логін" aria-describedby="login-addon"/>
@@ -124,11 +119,10 @@ function AuthModal(){
                     </form>
                 </div>
                 <div className="modal-footer">
-                    <button ref = {closeButtonRef} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
-                  <button type="submit" form="auth-form" className="btn btn-primary">Вхід(GET)</button>
-                  </div>
+                    <button ref={closeButtonRef} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" form="auth-form" className="btn btn-primary">Вхід</button>                    
+                </div>
                 </div>
             </div>
-        </div>
-        );
+        </div>;
 }
