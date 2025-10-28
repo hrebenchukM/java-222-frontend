@@ -6,13 +6,33 @@ import AppContext from "../../features/appContext/AppContext";
 export default function Product() {
     const {slug} = useParams();
  const [product, setProduct] = useState({price :0 });//products: [] 
- const {request} = useContext(AppContext);
+ const {request,token} = useContext(AppContext);
 
     useEffect(() => {
         request("api://product/" + slug)
         .then(setProduct);
     
     }, []);
+
+
+
+
+      const addToCartClick=(e)=>{
+        e.preventDefault();
+        if(token==null){
+            alert("Користувач не авторизований!");
+            return;
+        }
+        request("api://cart?product-id="+ product.id , {
+            method:"POST",
+        }).then(console.log).catch(console.log);
+
+        console.log( product.id);
+        alert(`Товар "${product.id}" додано до кошика!`);
+    
+    }
+
+
 
  return (
   <>
@@ -28,12 +48,16 @@ export default function Product() {
         <p>{product.description}</p>
         <strong>{product.price?.toFixed(2)} ₴</strong>
       </div>
+    <div className="col col-12 col-md-2 d-flex align-items-start">
+       <button onClick={addToCartClick} className="btn btn-outline-success w-100">
+          <i className="bi bi-cart-plus"></i> До кошику
+       </button>
+    </div>
 
       <div className="col col-2">
         <p>Місце здається під рекламу</p>
       </div>
     </div>
-
 
 
 
