@@ -9,6 +9,7 @@ export default function ProductCard({product}) {
 
     const addToCartClick=(e)=>{
         e.preventDefault();
+        e.stopPropagation()
         if(token==null){
             alert("Користувач не авторизований!");
             return;

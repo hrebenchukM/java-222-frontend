@@ -5,7 +5,14 @@ import { useContext, useRef } from "react";
 import AppContext from "../../features/appContext/AppContext";
 
 export default function Layout() {
-    const {token, setToken} = useContext(AppContext);
+    const {cart,token, setToken} = useContext(AppContext);
+const totalItems = (() => {
+  let s = 0;
+  for(const ci of cart.cartItems) {
+    s += ci.quantity;
+  }
+  return s;
+})();
 
     return <>
         <header>
@@ -34,14 +41,35 @@ export default function Layout() {
                             </form>
                             <div>
                                 {!token 
-                                ? <button className="btn btn-outline-secondary" 
+                                ? <>
+                                  <button className="btn btn-outline-secondary" 
                                         data-bs-toggle="modal" data-bs-target="#authModal">
                                     <i className="bi bi-box-arrow-in-right"></i>
                                   </button>
-                                : <button className="btn btn-outline-secondary" 
+                                </>
+                                : 
+                                <> 
+                                <button className="btn btn-outline-success me-2 cart-btn-layout"
+                                 title={
+                                 cart.cartItems.length === 0
+                                  ? "🛒 У кошику немає товарів"
+                                  : `🛒 Кошик
+                                  Позицій:  ${cart.cartItems.length}
+                                  Товарів:  ${totalItems}
+                                  Сума:     ₴${cart.price?.toFixed(2) ?? "0.00"}
+                                  → Натисніть для оформлення`
+                                  }>
+                                  <i className="bi bi-cart"></i>
+                                  <span> {cart.cartItems.length}</span>
+                                  <div style={{ fontSize: "0.8rem", lineHeight: "1" }}>
+                                  ₴{cart.price?.toFixed(2) ?? "0.00"}
+                                  </div>
+                                </button>
+                                  <button className="btn btn-outline-secondary" 
                                           onClick={() => setToken(null)}>
                                     <i className="bi bi-box-arrow-right"></i>
                                   </button>
+                                </>
                                 }
                             </div>
                         </div>
@@ -67,7 +95,7 @@ export default function Layout() {
 }
 
 function AuthModal() {
-    const {token, setToken} = useContext(AppContext);
+    const { setToken} = useContext(AppContext);
     const closeButtonRef = useRef();
 
     const onAuthSubmit = e => {

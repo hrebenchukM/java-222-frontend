@@ -16,3 +16,19 @@ body {
 main {
   flex: 1;
 }
+
+.cart-btn-layout {
+  position: relative;
+}
+.cart-btn-layout span{
+  position: absolute;
+  top: -.5rem;
+  right: -.5rem;
+  display: block;
+  border-radius: 50%;
+  background-color: rgb(18, 211, 134);
+  width: 1.5rem;
+  height: 1.5rem;
+  text-align: center;
+}
+
