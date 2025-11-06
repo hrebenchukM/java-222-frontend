@@ -49,7 +49,7 @@ const totalItems = (() => {
                                 </>
                                 : 
                                 <> 
-                                <button className="btn btn-outline-success me-2 cart-btn-layout"
+                                <Link to="/cart" className="btn btn-outline-success me-3 cart-btn-layout"
                                  title={
                                  cart.cartItems.length === 0
                                   ? "🛒 У кошику немає товарів"
@@ -64,7 +64,7 @@ const totalItems = (() => {
                                   <div style={{ fontSize: "0.8rem", lineHeight: "1" }}>
                                   ₴{cart.price?.toFixed(2) ?? "0.00"}
                                   </div>
-                                </button>
+                                </Link>
                                   <button className="btn btn-outline-secondary" 
                                           onClick={() => setToken(null)}>
                                     <i className="bi bi-box-arrow-right"></i>

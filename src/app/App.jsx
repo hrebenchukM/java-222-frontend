@@ -7,6 +7,7 @@ import AppContext from '../features/appContext/AppContext';
 import Admin from '../pages/admin/Admin';
 import Group from '../pages/group/Group';
 import Product from '../pages/product/Product';
+import Cart from '../pages/cart/Cart';
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -26,6 +27,8 @@ export default function App() {
   conf.headers['Authorization'] = 'Bearer ' + token;
 }
 
+
+
    }
 
 
@@ -41,20 +44,20 @@ export default function App() {
       }
     });
   });
-
-
-  useEffect(() => {
-     if(token) {
+ const UpdateCart=() => {
+    if(token) {
       request("api://cart").then(setCart);
      }
+ }
 
-  }, [token]);
-  return <AppContext.Provider value={{cart,token, setToken, request}}>
+  useEffect(() => { UpdateCart();}, [token]);
+  return <AppContext.Provider value={{cart,token, setToken, request,updateCart: UpdateCart}}>
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Layout/>}>
           <Route index element={<Home />} />
           <Route path='admin' element={<Admin />} />
+           <Route path='cart' element={<Cart />} />
           <Route path="group/:slug" element={<Group />} />
           <Route path="product/:slug" element={<Product />} />
           <Route path='privacy' element={<Privacy />} />
