@@ -6,14 +6,15 @@ import AppContext from "../../features/appContext/AppContext";
 
 export default function Layout() {
     const {cart,token, setToken} = useContext(AppContext);
-const totalItems = (() => {
-  let s = 0;
-  for(const ci of cart.cartItems) {
-    s += ci.quantity;
-  }
-  return s;
-})();
 
+const totalItems = (() => {
+        if (!cart?.cartItems) return 0;
+        let s = 0;
+        for (const ci of cart.cartItems) {
+            s += ci.quantity || 0;
+        }
+        return s;
+    })();
     return <>
         <header>
             <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom">
@@ -49,20 +50,24 @@ const totalItems = (() => {
                                 </>
                                 : 
                                 <> 
-                                <Link to="/cart" className="btn btn-outline-success me-3 cart-btn-layout"
-                                 title={
-                                 cart.cartItems.length === 0
-                                  ? "🛒 У кошику немає товарів"
-                                  : `🛒 Кошик
-                                  Позицій:  ${cart.cartItems.length}
-                                  Товарів:  ${totalItems}
-                                  Сума:     ₴${cart.price?.toFixed(2) ?? "0.00"}
-                                  → Натисніть для оформлення`
-                                  }>
+                                 <Link
+                                    to="/cart"
+                                    className="btn btn-outline-success me-3 cart-btn-layout"
+                                    title={
+      !cart?.cartItems?.length
+        ? "🛒 У кошику немає товарів"
+        : `🛒 Кошик
+Позицій:  ${cart?.cartItems?.length || 0}
+Товарів:  ${totalItems}
+Сума:     ₴${cart?.price?.toFixed(2) ?? "0.00"}
+→ Натисніть для оформлення`
+    }
+                                            >
                                   <i className="bi bi-cart"></i>
-                                  <span> {cart.cartItems.length}</span>
+                                  <span> {cart?.cartItems?.length || 0}</span>
+
                                   <div style={{ fontSize: "0.8rem", lineHeight: "1" }}>
-                                  ₴{cart.price?.toFixed(2) ?? "0.00"}
+                                   ₴{cart?.price?.toFixed(2) ?? "0.00"}
                                   </div>
                                 </Link>
                                   <button className="btn btn-outline-secondary" 

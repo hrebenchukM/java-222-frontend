@@ -44,14 +44,22 @@ export default function App() {
       }
     });
   });
- const UpdateCart=() => {
+  const initialCart = {cartItems: []};
+  const updateCart = () => {
     if(token) {
-      request("api://cart").then(setCart);
-     }
- }
+      request("api://cart").then(data => {
+        if(data){ 
+          setCart(data);
+        }
+        else {
+          setCart(initialCart);
+        }
+      });
+    }
+  }
 
-  useEffect(() => { UpdateCart();}, [token]);
-  return <AppContext.Provider value={{cart,token, setToken, request,updateCart: UpdateCart}}>
+  useEffect(() => { updateCart();}, [token]);
+  return <AppContext.Provider value={{cart,token, setToken, request,updateCart }}>
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Layout/>}>
