@@ -8,10 +8,13 @@ import Admin from '../pages/admin/Admin';
 import Group from '../pages/group/Group';
 import Product from '../pages/product/Product';
 import Cart from '../pages/cart/Cart';
+import Profile from '../pages/profile/Profile';
+import Base64 from '../shared/base64/Base64';
 
 export default function App() {
   const [token, setToken] = useState(null);
   const [cart, setCart] = useState({cartItems:[]});
+  const [user, setUser] = useState(null);
 
   const request = (url, conf) => new Promise((resolve, reject) => {
     const backUrl = "http://localhost:8080/JavaWeb222/";
@@ -58,8 +61,26 @@ export default function App() {
     }
   }
 
-  useEffect(() => { updateCart();}, [token]);
-  return <AppContext.Provider value={{cart,token, setToken, request,updateCart }}>
+  useEffect(() => { 
+    updateCart();
+    if(token){
+      const payload = Base64.jwtDecodePayload(token);
+      setUser( 
+        {
+          id: payload.sub,
+          aud: payload.aud,
+          email: payload.email,
+          name: payload.name,
+        }
+       ); 
+    }
+    else {
+      setUser(null);
+    }
+  
+  }, [token]);
+
+  return <AppContext.Provider value={{cart,user, setToken, request,updateCart }}>
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Layout/>}>
@@ -68,6 +89,7 @@ export default function App() {
            <Route path='cart' element={<Cart />} />
           <Route path="group/:slug" element={<Group />} />
           <Route path="product/:slug" element={<Product />} />
+          <Route path='profile' element={<Profile />} />
           <Route path='privacy' element={<Privacy />} />
         </Route>
       </Routes>
