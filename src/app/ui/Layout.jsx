@@ -52,7 +52,25 @@ const totalItems = (() => {
                                 </>
                                 : 
                                 <> 
-                                  <Link to="/profile" title={user.name} className="link-to-profile v-center ">
+                                <Link to="/profile"title={
+                                 (() => {
+                                  let t = user.email;
+                                    if (user.dob) {
+                                        const b = new Date(user.dob);
+                                        const now = new Date();
+
+                                        let next = new Date(now.getFullYear(), b.getMonth(), b.getDate());
+                                        if (next < now) next.setFullYear(next.getFullYear() + 1);
+
+                                        const diff = Math.ceil((next - now) / (1000 * 60 * 60 * 24));
+
+                                        t += `\nДата народження: ${b.toLocaleDateString()}`;
+                                        t += `\nДо дня народження: ${diff} днів`;
+                                        }
+                                        return t;
+                                    })()
+                                    }
+                                    className="link-to-profile v-center ">
                                  {(user?.name?.[0] ?? user?.aud?.[0] ?? '?').toUpperCase()}
                                 </Link>
 

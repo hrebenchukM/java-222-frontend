@@ -71,6 +71,8 @@ export default function App() {
           aud: payload.aud,
           email: payload.email,
           name: payload.name,
+          dob: payload.dob ?? null
+
         }
        ); 
     }
