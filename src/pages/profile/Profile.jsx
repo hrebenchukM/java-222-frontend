@@ -32,14 +32,42 @@ export default function Profile() {
         {userData.login},
         {userData.user.name}
     </div>
+    
     <div className="col">
-       <div className="list-group">
-                    {userData.carts.map(cart => <Link key={cart.cartId} to="/" 
-                        className={"list-group-item list-group-item-action " + (cart.paidAt ? "bg-success" : (cart.deletedAt ? "bg-danger" : "bg-info"))}>
-                        {new Date(cart.createdAt).toLocaleString()} {cart.cartItems.length}
-                    </Link>)}
-        </div>
+    <div className="list-group">
+        {userData.carts.map(cart => {
+
+            const positions = cart.cartItems.length;
+            const totalItems = cart.cartItems.reduce((s, ci) => s + ci.quantity, 0);
+            const tooltip = cart.cartItems
+                .map(ci => `${ci.product?.name ?? "???"} — ${ci.quantity}`)
+                .join("\n");
+
+            let cls = "list-group-item list-group-item-action ";
+
+            if(cart.paidAt) cls += "bg-success-subtle text-success-emphasis";
+            else if(cart.deletedAt) cls += "bg-danger-subtle text-danger-emphasis";
+            else cls += "bg-info-subtle text-info-emphasis";
+
+            return (
+                <Link 
+                    key={cart.cartId} 
+                    to="/" 
+                    title={tooltip}
+                    className={cls}
+                >
+                    {new Date(cart.createdAt).toLocaleString()}
+                    {" — "}
+                    {positions} позиції ({totalItems} товарів)
+                    {" — "}
+                    {cart.price} грн
+                </Link>
+            );
+        })}
+
     </div>
+</div>
+
 </div>
 
 
