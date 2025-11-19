@@ -4,13 +4,15 @@ import { useContext } from "react";
 
 export default function ProductCard({ product }) {
 
-    const { cart, token, request, updateCart } = useContext(AppContext);
+    const { cart, user, request, updateCart } = useContext(AppContext);
     const navigate = useNavigate(); 
+
+    
     const addToCartClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (token == null) {
+        if (user == null) {
             alert("Користувач не авторизований!");
             return;
         }

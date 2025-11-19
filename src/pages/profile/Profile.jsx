@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../../features/appContext/AppContext";
 import { Link } from "react-router-dom";
-
+import './ui/Profile.css'
 const emptyUserData = {
     role: {},
     user: {},
@@ -51,8 +51,8 @@ export default function Profile() {
 
             return (
                 <Link 
-                    key={cart.cartId} 
-                    to="/" 
+                    key={cart.id} 
+                    to={cart.paidAt || cart.deletedAt ? "/history/"+cart.id:"/cart"}
                     title={tooltip}
                     className={cls}
                 >

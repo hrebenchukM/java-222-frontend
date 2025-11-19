@@ -10,6 +10,7 @@ import Product from '../pages/product/Product';
 import Cart from '../pages/cart/Cart';
 import Profile from '../pages/profile/Profile';
 import Base64 from '../shared/base64/Base64';
+import History from '../pages/history/History';
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -93,6 +94,8 @@ export default function App() {
           <Route path="product/:slug" element={<Product />} />
           <Route path='profile' element={<Profile />} />
           <Route path='privacy' element={<Privacy />} />
+          <Route path="history/:cartId" element={<History />} />
+
         </Route>
       </Routes>
     </BrowserRouter>
