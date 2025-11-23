@@ -1,13 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams ,useNavigate } from "react-router-dom";
 import AppContext from "../../features/appContext/AppContext";
 
 const _initialCart = {cartItems: []};
 
 export default function History() {
-    const {request, user} = useContext(AppContext);
+    const {request, user, cart, updateCart} = useContext(AppContext);
+
     const {cartId} = useParams();
     const [_cart, _setCart] = useState(_initialCart);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(user && cartId) {
@@ -27,12 +29,35 @@ export default function History() {
     }, [user, cartId]);
 
 
-    const repeatClick = () => {
-        request("api://cart/" + cartId, {
-           method: "LINK"
-        }).then(console.log);
-    }
+ const repeatClick = async () => {
+    await updateCart();
 
+    const freshCart = await request("api://cart");
+
+    const hasActiveCart =
+        freshCart && freshCart.cartItems && freshCart.cartItems.length > 0;
+
+    let question = hasActiveCart
+        ? "Вміст замовлення буде додано до вашого кошику. Продовжити?"
+        : "Замовлення буде повторене. Продовжити?";
+
+    if (!window.confirm(question)) return;
+
+    request("api://cart/" + cartId, { method: "LINK" })
+        .then(() => {
+            updateCart();
+            alert("Замовлення повторене");
+            navigate("/cart");
+        });
+};
+
+if (!user) {
+    return (
+        <div className="alert alert-danger mt-5 text-center">
+            Для перегляду історії необхідно увійти до сайту
+        </div>
+    );
+}
 
     return <>
         <h1 className="display-5 my-3">Історія покупки {_cart.createdAt}</h1>
