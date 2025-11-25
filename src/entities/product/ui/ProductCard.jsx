@@ -37,32 +37,31 @@ export default function ProductCard({ product }) {
         navigate("/cart");
     };
 
-    const inCart = cart?.cartItems?.some(ci => ci.product.id === product.id);
-
+    
     return (
         <div className="col" key={product.id}>
-            <Link className="h-100 nav-link" to={"/product/" + (product.slug || product.id)}>
-                <div className="card h-100">
+               <div className="card h-100">
+                <Link className="h-100 nav-link" to={"/product/" + (product.slug || product.id)}>
                     <img src={product.imageUrl} className="card-img-top" alt={product.name} />
                     <div className="card-body">
                         <h5 className="card-title">{product.name}</h5>
                         <p className="card-text">{product.description}</p>
                     </div>
+                </Link>
                     <div className="card-footer d-flex justify-content-between align-items-center">
                         <span>₴{product.price.toFixed(2)}</span>
 
-                        {inCart ? (
-                            <button onClick={goToCart} className="btn btn-success">
-                                <i className="bi bi-cart-check"></i> У кошику
-                            </button>
-                        ) : (
-                            <button onClick={addToCartClick} className="btn btn-outline-success">
-                                <i className="bi bi-cart-plus"></i> Додати
-                            </button>
-                        )}
+                        {cart.cartItems.some(ci=>ci.productId == product.id)
+                        ? <Link to="/cart" className="btn btn-success">
+                                <i className="bi bi-cart-check"></i>
+                        </Link>
+                        : <button onClick={addToCartClick} className="btn btn-outline-success">
+                                <i className="bi bi-cart-plus"></i>
+                        </button>}
+
                     </div>
                 </div>
-            </Link>
+         
         </div>
     );
 }

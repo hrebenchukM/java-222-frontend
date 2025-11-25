@@ -1,87 +1,45 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../../features/appContext/AppContext";
 
+
 export default function Admin() {
-    const {token} = useContext(AppContext);
+    const {user, request} = useContext(AppContext);
     const [groups, setGroups] = useState([]);
 
     const loadGroups = () => {
-        fetch("http://localhost:8080/JavaWeb222/admin/groups", {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token
-            }
-        }).then(r => r.json()).then(setGroups);
+        request("api://admin/groups").then(setGroups);
     };
 
     useEffect(() => {
-        if(token) {
+        if(user) {
             loadGroups();
         }
         else {
             setGroups([]);
         }
-    }, [token]);
+    }, [user]);
 
     const onProductFormSubmit = e => {
         e.preventDefault();
-        const error = document.getElementById("product-error");
-        error.innerText = "";
-        fetch("http://localhost:8080/JavaWeb222/admin/product", {
+        request("api://admin/product", {
             method: "POST",
-            headers: {
-                "Authorization": "Bearer " + token
-            },
             body: new FormData(e.target)
-        }).then(r => {
-            let ct = r.headers.get("Content-Type");
-            if(ct.startsWith("application/json")) {
-                r.json().then(j => {
-                    if(j == "Ok") {
-                        e.target.reset();
-                        alert("Товар додано");
-                    }
-                    else {
-                         error.innerText = j;
-                    }
-                });
-            }
-            else {
-                r.text().then(console.log);
-            }
-        });
+        }).then(_ => alert("Товар додано"));
     }
 
     const onGroupFormSubmit = e => {
         e.preventDefault();
-        fetch("http://localhost:8080/JavaWeb222/admin/group", {
+        request("api://admin/group", {
             method: "POST",
-            headers: {
-                "Authorization": "Bearer " + token
-            },
             body: new FormData(e.target)
-        }).then(r => {
-            let ct = r.headers.get("Content-Type");
-            if(ct.startsWith("application/json")) {
-                r.json().then(j => {
-                    if(j == "Ok") {
-                        e.target.reset();
-                        loadGroups();
-                        alert("Групу додано");
-                    }
-                    else {
-                    const error = document.getElementById("pg-error");
-                    if(error){ error.innerText = j;}
-                    }
-                });
-            }
-            else {
-                r.text().then(console.log);
-            }
+        }).then(_ => {
+            e.target.reset();
+            loadGroups();
+            alert("Групу додано");
         });
     };
 
-    return !token 
+    return !user 
     ? <>    
         <div className="alert alert-danger mt-4" role="alert">
             Необхідно автентифікуватися
@@ -142,7 +100,6 @@ export default function Admin() {
                         </div>
                     </div>
                     <div className="col">
-                        <div id="pg-error" className="text-danger mb-2"></div>
                         <button type="submit" className="btn btn-primary">Додати</button>
                     </div>
                 </div>
@@ -224,7 +181,6 @@ export default function Admin() {
                         </div>
                     </div>
                     <div className="col">
-                        <div id="product-error" className="text-danger mb-2"></div>
                         <button type="submit" className="btn btn-primary">Додати</button>
                     </div>
                 </div>

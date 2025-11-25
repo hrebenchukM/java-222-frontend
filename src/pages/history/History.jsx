@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams ,useNavigate } from "react-router-dom";
 import AppContext from "../../features/appContext/AppContext";
+import { Link } from "react-router-dom";
 
 const _initialCart = {cartItems: []};
 
@@ -28,28 +29,19 @@ export default function History() {
         }
     }, [user, cartId]);
 
-
- const repeatClick = async () => {
-    await updateCart();
-
-    const freshCart = await request("api://cart");
-
-    const hasActiveCart =
-        freshCart && freshCart.cartItems && freshCart.cartItems.length > 0;
-
-    let question = hasActiveCart
-        ? "Вміст замовлення буде додано до вашого кошику. Продовжити?"
-        : "Замовлення буде повторене. Продовжити?";
-
-    if (!window.confirm(question)) return;
-
-    request("api://cart/" + cartId, { method: "LINK" })
-        .then(() => {
-            updateCart();
-            alert("Замовлення повторене");
+const repeatClick = () => {
+    request("api://cart/" + cartId, {
+        method: "LINK"
+    }).then(_ => {
+        updateCart();
+        if(confirm("Замовлення додане до кошику.\nПерейти на сторінку кошику?"))
             navigate("/cart");
-        });
+    })
+    .catch(err => {
+        alert(err.data || "Помилка повторення замовлення");
+    });
 };
+
 
 if (!user) {
     return (
@@ -72,10 +64,17 @@ if (!user) {
                 <div className="col col-1 text-center ">Кількість</div>
                 <div className="col col-2 text-center">Сума</div>
             </div>
-            {_cart.cartItems.map(cartItem => <div className="row mt-3 border-bottom pb-3">
+            {_cart.cartItems.map(cartItem => <div key = {cartItem.id}className="row mt-3 border-bottom pb-3">
                 <div className="col col-2 ">
-                    <img className="w-100" src={cartItem.product.imageUrl} alt={cartItem.product.name} />
+                    <Link to={"/product/" + (cartItem.product.slug || cartItem.product.id)}>
+                        <img
+                            className="w-100"
+                            src={cartItem.product.imageUrl}
+                            alt={cartItem.product.name}
+                        />
+                    </Link>
                 </div>
+
                 <div className="col col-5">
                     <b className="fs-5">{cartItem.product.name}</b><br/>
                     <span className="text-muted fs-6">{cartItem.product.description}</span>
