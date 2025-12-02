@@ -1,11 +1,17 @@
+
+
 .radio-container {
     display: inline-flex;
     flex-direction: row-reverse;
+    gap: 4px;
 }
 
 .radio-container label {
     color: lightgray;
-    font-size: x-large;
+    font-size: 28px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
 }
 
 .radio-container [type="radio"] {
@@ -15,6 +21,7 @@
     position: absolute;
     z-index: -1;
 }
+
 
 .radio-container [type="radio"]:checked ~ label,
 .radio-container [type="radio"]:hover ~ label {

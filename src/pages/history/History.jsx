@@ -69,10 +69,22 @@ export default function History() {
 
     </>;
 }
-
 function CartItemRow({cartItem}) {
-
+ const { request } = useContext(AppContext);
+        
     const [comment, setComment] = useState("");
+    const [cleanComment, setCleanComment] = useState("");
+
+ 
+    const onCommentChange = (e) => {
+        let v = e.target.value;
+
+        
+        let cleaned = v.replace(/\s+/g, " ").trim();
+
+        setComment(v);
+        setCleanComment(cleaned);
+    };
 
     const rateClick = () => {
         const ciId = cartItem.id;
@@ -81,8 +93,8 @@ function CartItemRow({cartItem}) {
         let rate = 0;
         if(rateInput) rate = rateInput.value;
 
-        if(rate || comment) {
-            fetch("api://rate", {
+    if(rate || comment) {
+            request("api://rate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json; charset=utf-8"
@@ -91,7 +103,7 @@ function CartItemRow({cartItem}) {
                     ciId,
                     productId,
                     rate,
-                    comment
+                    comment: cleanComment
                 })
             }).then(console.log);
         }
@@ -101,32 +113,60 @@ function CartItemRow({cartItem}) {
         console.log(ciId, productId, comment, rate);
     };
 
+    const isDisabled = cleanComment.length < 10;
+
     return <div className="row mt-3 border-bottom pb-3">
         <div className="col col-2">
             <Link className="w-100" to={"/product/" + (cartItem.product.slug || cartItem.product.id)}>
                 <img className="w-100" src={cartItem.product.imageUrl} alt={cartItem.product.name} />
             </Link>
         </div>
+
         <div className="col col-5">
             <b className="fs-5" title={cartItem.product.description}>{cartItem.product.name}</b>
-            
-            <div className="border p-2 mt-2">
-                <input type="text" placeholder="Відгук" className="w-100" 
-                    value={comment} onChange={e => setComment(e.target.value)}/>
-                <div className="d-flex justify-content-between mt-2">
-                    <div className="radio-container">
-                    <input type="radio" value="5" name={cartItem.id} id={cartItem.id +"_1"} /><label htmlFor={cartItem.id +"_1"}>★</label>
-                    <input type="radio" value="4" name={cartItem.id} id={cartItem.id +"_2"} /><label htmlFor={cartItem.id +"_2"}>★</label>
-                    <input type="radio" value="3" name={cartItem.id} id={cartItem.id +"_3"} /><label htmlFor={cartItem.id +"_3"}>★</label>
-                    <input type="radio" value="2" name={cartItem.id} id={cartItem.id +"_4"} /><label htmlFor={cartItem.id +"_4"}>★</label>
-                    <input type="radio" value="1" name={cartItem.id} id={cartItem.id +"_5"} /><label htmlFor={cartItem.id +"_5"}>★</label>
-                </div>
-                <button onClick={rateClick} className="btn btn-outline-info"><i className="bi bi-send-check"></i></button>
-                </div>
-                
-            </div>
 
+            <div className="border p-2 mt-2">
+
+
+                <input 
+                    type="text" 
+                    placeholder="Відгук" 
+                    className="w-100"
+                    value={comment} 
+                    onChange={onCommentChange}
+                />
+
+                <div 
+                    className="text-end small mt-1"
+                    style={{color: cleanComment.length < 10 ? "red" : "green"}}
+                >
+                    {cleanComment.length}/10
+                </div>
+
+                <div className="d-flex justify-content-between mt-2">
+
+                    <div className="radio-container">
+                        <input type="radio" value="5" name={cartItem.id} id={cartItem.id +"_1"} /><label htmlFor={cartItem.id +"_1"}>★</label>
+                        <input type="radio" value="4" name={cartItem.id} id={cartItem.id +"_2"} /><label htmlFor={cartItem.id +"_2"}>★</label>
+                        <input type="radio" value="3" name={cartItem.id} id={cartItem.id +"_3"} /><label htmlFor={cartItem.id +"_3"}>★</label>
+                        <input type="radio" value="2" name={cartItem.id} id={cartItem.id +"_4"} /><label htmlFor={cartItem.id +"_4"}>★</label>
+                        <input type="radio" value="1" name={cartItem.id} id={cartItem.id +"_5"} /><label htmlFor={cartItem.id +"_5"}>★</label>
+                    </div>
+
+
+                    <button 
+                        onClick={rateClick} 
+                        className="btn btn-outline-info"
+                        disabled={isDisabled}
+                        title={isDisabled ? "Коментар має містити мінімум 10 символів" : ""}
+                    >
+                        <i className="bi bi-send-check"></i>
+                    </button>
+
+                </div>
+            </div>
         </div>
+
         <div className="col col-2 text-center">{cartItem.product.price}</div>
         <div className="col col-1 text-center">{cartItem.quantity}</div>
         <div className="col col-2 text-center">{cartItem.price}</div>
