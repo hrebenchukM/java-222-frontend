@@ -1,6 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"; 
 import { useContext } from "react";
-import { Link } from "react-router-dom";
 import AppContext from "../../../features/appContext/AppContext";
 
 export default function ProductCard({product}) {
