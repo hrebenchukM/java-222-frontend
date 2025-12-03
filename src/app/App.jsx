@@ -83,7 +83,7 @@ export default function App() {
   
   }, [token]);
 
-  return <AppContext.Provider value={{cart,user, setToken, request,updateCart }}>
+  return <AppContext.Provider value={{cart,user, token, setToken, request,updateCart }}>
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Layout/>}>

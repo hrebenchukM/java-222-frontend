@@ -69,41 +69,109 @@ export default function History() {
 
     </>;
 }
+
 function CartItemRow({cartItem}) {
- const { request } = useContext(AppContext);
-        
+
+    return <div className="row mt-3 border-bottom pb-3">
+        <div className="col col-2">
+            <Link className="w-100" to={"/product/" + (cartItem.product.slug || cartItem.product.id)}>
+                <img className="w-100" src={cartItem.product.imageUrl} alt={cartItem.product.name} />
+            </Link>
+        </div>
+        <div className="col col-5">
+            <b className="fs-5" title={cartItem.product.description}>{cartItem.product.name}</b>
+
+            {cartItem.product.rate == null 
+            ? <RateWidget cartItem={cartItem} /> 
+            : <RateData cartItem={cartItem} />}
+            {/* TODO: реалізувати можливість редагування коментаря: при натисканні 
+                відповідної кнопки замінювати на RateWidget із заповненими даними */}
+            
+        </div>
+        <div className="col col-2 text-center">{cartItem.product.price}</div>
+        <div className="col col-1 text-center">{cartItem.quantity}</div>
+        <div className="col col-2 text-center">{cartItem.price}</div>
+    </div>;
+}
+
+function RateData({cartItem}) {
+
+    const rate = cartItem.product.rate;
+
+    const created = new Date(rate.createdAt);
+    const now = new Date();
+
+    const ms = now - created;
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+
+    let dateText = "";
+
+    const two = n => (n < 10 ? "0" + n : n);
+
+    if (days === 0) {
+           dateText = two(created.getHours()) + ":" + two(created.getMinutes());
+    }
+    else if (days < 7) {
+        const word =
+            days === 1 ? "день тому" :
+            days === 2 || days === 3 || days === 4 ? "дні тому" :
+            "днів тому";
+
+        dateText =
+            days + " " + word +
+            " • " +
+            two(created.getHours()) + ":" + two(created.getMinutes());
+    }
+    else {
+        dateText =
+            created.getFullYear() +
+            "-" + two(created.getMonth() + 1) +
+            "-" + two(created.getDate());
+    }
+
+    const stars = "★".repeat(rate.rateStars) + "☆".repeat(5 - rate.rateStars);
+
+    return (
+        <div className="border p-2 mt-2">
+
+            <div className="text-muted small mb-1">
+                {dateText}
+            </div>
+
+            Вами залишено коментар: <i>{rate.text}</i><br/>
+
+            <span style={{ fontSize: "20px", color: "gold" }}>{stars.slice(0, rate.rateStars)}</span>
+            <span style={{ fontSize: "20px", color: "lightgray" }}>{stars.slice(rate.rateStars)}</span>
+
+        </div>
+    );
+}
+
+function RateWidget({cartItem}) {
+    const {request} = useContext(AppContext);
     const [comment, setComment] = useState("");
-    const [cleanComment, setCleanComment] = useState("");
-
- 
-    const onCommentChange = (e) => {
-        let v = e.target.value;
-
-        
-        let cleaned = v.replace(/\s+/g, " ").trim();
-
-        setComment(v);
-        setCleanComment(cleaned);
-    };
 
     const rateClick = () => {
         const ciId = cartItem.id;
-        const productId = cartItem.product.id;
+        // const productId = cartItem.product.id;
+        const productId = cartItem.productId;
+
         const rateInput = document.querySelector(`[name="${ciId}"]:checked`);
         let rate = 0;
         if(rateInput) rate = rateInput.value;
 
-    if(rate || comment) {
+        if(rate || comment) {
             request("api://rate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json; charset=utf-8"
                 },
                 body: JSON.stringify({
+                    // ciId: '1' + ciId.substring(1),
                     ciId,
                     productId,
                     rate,
-                    comment: cleanComment
+                    comment
                 })
             }).then(console.log);
         }
@@ -113,62 +181,18 @@ function CartItemRow({cartItem}) {
         console.log(ciId, productId, comment, rate);
     };
 
-    const isDisabled = cleanComment.length < 10;
-
-    return <div className="row mt-3 border-bottom pb-3">
-        <div className="col col-2">
-            <Link className="w-100" to={"/product/" + (cartItem.product.slug || cartItem.product.id)}>
-                <img className="w-100" src={cartItem.product.imageUrl} alt={cartItem.product.name} />
-            </Link>
+    return <div className="border p-2 mt-2">
+        <input type="text" placeholder="Відгук" className="w-100" 
+            value={comment} onChange={e => setComment(e.target.value)}/>
+        <div className="d-flex justify-content-between mt-2">
+            <div className="radio-container">
+            <input type="radio" value="5" name={cartItem.id} id={cartItem.id +"_1"} /><label htmlFor={cartItem.id +"_1"}>★</label>
+            <input type="radio" value="4" name={cartItem.id} id={cartItem.id +"_2"} /><label htmlFor={cartItem.id +"_2"}>★</label>
+            <input type="radio" value="3" name={cartItem.id} id={cartItem.id +"_3"} /><label htmlFor={cartItem.id +"_3"}>★</label>
+            <input type="radio" value="2" name={cartItem.id} id={cartItem.id +"_4"} /><label htmlFor={cartItem.id +"_4"}>★</label>
+            <input type="radio" value="1" name={cartItem.id} id={cartItem.id +"_5"} /><label htmlFor={cartItem.id +"_5"}>★</label>
         </div>
-
-        <div className="col col-5">
-            <b className="fs-5" title={cartItem.product.description}>{cartItem.product.name}</b>
-
-            <div className="border p-2 mt-2">
-
-
-                <input 
-                    type="text" 
-                    placeholder="Відгук" 
-                    className="w-100"
-                    value={comment} 
-                    onChange={onCommentChange}
-                />
-
-                <div 
-                    className="text-end small mt-1"
-                    style={{color: cleanComment.length < 10 ? "red" : "green"}}
-                >
-                    {cleanComment.length}/10
-                </div>
-
-                <div className="d-flex justify-content-between mt-2">
-
-                    <div className="radio-container">
-                        <input type="radio" value="5" name={cartItem.id} id={cartItem.id +"_1"} /><label htmlFor={cartItem.id +"_1"}>★</label>
-                        <input type="radio" value="4" name={cartItem.id} id={cartItem.id +"_2"} /><label htmlFor={cartItem.id +"_2"}>★</label>
-                        <input type="radio" value="3" name={cartItem.id} id={cartItem.id +"_3"} /><label htmlFor={cartItem.id +"_3"}>★</label>
-                        <input type="radio" value="2" name={cartItem.id} id={cartItem.id +"_4"} /><label htmlFor={cartItem.id +"_4"}>★</label>
-                        <input type="radio" value="1" name={cartItem.id} id={cartItem.id +"_5"} /><label htmlFor={cartItem.id +"_5"}>★</label>
-                    </div>
-
-
-                    <button 
-                        onClick={rateClick} 
-                        className="btn btn-outline-info"
-                        disabled={isDisabled}
-                        title={isDisabled ? "Коментар має містити мінімум 10 символів" : ""}
-                    >
-                        <i className="bi bi-send-check"></i>
-                    </button>
-
-                </div>
-            </div>
-        </div>
-
-        <div className="col col-2 text-center">{cartItem.product.price}</div>
-        <div className="col col-1 text-center">{cartItem.quantity}</div>
-        <div className="col col-2 text-center">{cartItem.price}</div>
+        <button onClick={rateClick} className="btn btn-outline-info"><i className="bi bi-send-check"></i></button>
+        </div>        
     </div>;
 }
