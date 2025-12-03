@@ -9,7 +9,7 @@ export default function ProductCard({product}) {
         e.preventDefault();
        if (token == null) {
             alert("Увійдіть у систему для здійснення покупок");
-            return;
+            return;e
         }
         request("api://cart?product-id=" + product.id, {
             method: "POST",
@@ -28,9 +28,18 @@ export default function ProductCard({product}) {
                     </div>
                 </Link>
                 <div className="card-footer d-flex justify-content-between align-items-center">
+
                     <span>
                         ₴ {product.price.toFixed(2)}
                     </span>
+                   <div 
+                        title={(product.avgRate > 0 ? "Оцінка: " + product.avgRate.toFixed(1) + ", " : "") 
+                            + "Всього відгуків: " + (product.ratesCount || 0)}>
+                            {Array(Math.round(product.avgRate)).fill('★').join('')}
+                            {Array(5 - Math.round(product.avgRate)).fill('☆').join('')}
+                    </div>
+
+
                     {cart.cartItems.some(ci=>ci.productId == product.id)
                     ? <Link to="/cart" className="btn btn-success">
                         <i className="bi bi-cart-check"></i>
