@@ -2,12 +2,33 @@ import { useEffect, useState ,useContext} from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import AppContext from "../../features/appContext/AppContext";
+import "./Product.css";
 
 export default function Product() {
     const {slug} = useParams();
  const [product, setProduct] = useState({price :0 });//products: [] 
  const {request,token} = useContext(AppContext);
+ const StarRating = ({ value }) => {
+        const stars = [];
 
+        for (let i = 1; i <= 5; i++) {
+            const fill = Math.min(Math.max(value - (i - 1), 0), 1) * 100;
+
+            stars.push(
+                <div key={i} className="star-wrap">
+                    <div className="star-base">★</div>
+                    <div className="star-fill" style={{ width: fill + "%" }}>★</div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="d-flex align-items-center">
+                {stars}
+                <span className="ms-2">{value.toFixed(2)}</span>
+            </div>
+        );
+    };
     useEffect(() => {
         request("api://product/" + slug)
         .then(setProduct);
@@ -15,7 +36,9 @@ export default function Product() {
     }, []);
 
 
-
+ const avgStars = product.rates && product.rates.length > 0
+        ? product.rates.reduce((s, r) => s + r.rateStars, 0) / product.rates.length
+        : 0;
 
       const addToCartClick=(e)=>{
         e.preventDefault();
@@ -47,6 +70,10 @@ export default function Product() {
         <h3>{product.name}</h3>
         <p>{product.description}</p>
         <strong>{product.price?.toFixed(2)} ₴</strong>
+        <div className="mt-2">
+            <StarRating value={avgStars} />
+        </div>
+
       </div>
     <div className="col col-12 col-md-2 d-flex align-items-start">
        <button onClick={addToCartClick} className="btn btn-outline-success w-100">
@@ -69,8 +96,9 @@ export default function Product() {
         <br/>
 
         Оцінка: {r.rateStars > 0
-            ? <b>{r.rateStars}</b>
-            : <span title="Немає оцінки">--</span>}
+        ? <b>{r.rateStars}</b>
+        : <span title="Немає оцінки">--</span>}
+
     </div>)}
 </div>
 
