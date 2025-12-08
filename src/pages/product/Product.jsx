@@ -5,9 +5,9 @@ import AppContext from "../../features/appContext/AppContext";
 import "./Product.css";
 
 export default function Product() {
-    const {slug} = useParams();
+ const {slug} = useParams();
  const [product, setProduct] = useState({price :0 });//products: [] 
- const {request,token} = useContext(AppContext);
+ const {cart,request,addToCart } = useContext(AppContext);
  const StarRating = ({ value }) => {
         const stars = [];
 
@@ -40,20 +40,10 @@ export default function Product() {
         ? product.rates.reduce((s, r) => s + r.rateStars, 0) / product.rates.length
         : 0;
 
-      const addToCartClick=(e)=>{
-        e.preventDefault();
-        if(token==null){
-            alert("Користувач не авторизований!");
-            return;
-        }
-        request("api://cart?product-id="+ product.id , {
-            method:"POST",
-        }).then(console.log).catch(console.log);
-
-        console.log( product.id);
-        alert(`Товар "${product.id}" додано до кошика!`);
-    
-    }
+     const addToCartClick = (e) => {
+    e.preventDefault();
+    addToCart(product);
+};
 
 
 
@@ -76,9 +66,19 @@ export default function Product() {
 
       </div>
     <div className="col col-12 col-md-2 d-flex align-items-start">
-       <button onClick={addToCartClick} className="btn btn-outline-success w-100">
-          <i className="bi bi-cart-plus"></i> До кошику
-       </button>
+{cart.cartItems.some(ci => ci.productId === product.id)
+    ? (
+        <Link to="/cart" className="btn btn-success">
+            <i className="bi bi-cart-check"></i>
+        </Link>
+      )
+    : (
+        <button onClick={addToCartClick} className="btn btn-outline-success">
+            <i className="bi bi-cart-plus"></i>
+        </button>
+      )
+}
+
     </div>
 
 <div className="col col-2">

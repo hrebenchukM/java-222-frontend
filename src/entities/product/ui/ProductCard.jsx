@@ -3,20 +3,13 @@ import { useContext } from "react";
 import AppContext from "../../../features/appContext/AppContext";
 
 export default function ProductCard({product}) {
-   const {cart, token, request, updateCart} = useContext(AppContext);
+   const {cart,addToCart} = useContext(AppContext);
+
     const navigate = useNavigate(); 
-    const addToCartClick = (e) => {
-        e.preventDefault();
-       if (token == null) {
-            alert("Увійдіть у систему для здійснення покупок");
-            return;e
-        }
-        request("api://cart?product-id=" + product.id, {
-            method: "POST",
-        }).then(updateCart)
-        .catch(console.log);
-        
-    }
+const addToCartClick = (e) => {
+    e.preventDefault();
+    addToCart(product);
+};
 
     return <div className="col">
             <div className="card h-100">
