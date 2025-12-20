@@ -83,23 +83,7 @@ export default function Product() {
 
 <div className="col col-2">
     <div className="border p-2 mt-2">Місце здається під рекламу</div>
-
-    {product.rates && product.rates.map(r => <div key={r.id} className="border p-2 mt-2">
-        {r.createdAt.substring(0,5)}&thinsp;
-        <a href={"mailto:" + r.user.email} title={r.user.name + ' ' + r.user.email}>
-            {r.user.name.split(' ').map(x => x.substring(0,1)).join('')}
-        </a>&thinsp;
-
-        Коментар: {r.text && r.text.length > 0
-            ? <i>{r.text}</i>
-            : <span title="Немає коментаря">--</span>}
-        <br/>
-
-        Оцінка: {r.rateStars > 0
-        ? <b>{r.rateStars}</b>
-        : <span title="Немає оцінки">--</span>}
-
-    </div>)}
+     <RatePaginator initialRates={product.rates} productId={product.id} />
 </div>
 
     </div>
@@ -131,5 +115,152 @@ export default function Product() {
 
 
         </>
+    );
+}
+function RatePaginator({ productId }) {
+    const { request } = useContext(AppContext);
+
+    const [rates, setRates] = useState([]);
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        lastPage: 1,
+        perPage: 2,
+        totalItems: 0
+    });
+
+    const loadRates = (page = 1, perPage = 2) => {
+        const url = `api://rate/${productId}?page=${page}&perpage=${perPage}`;
+
+        request(url, {}, true).then(r => {
+            setRates(r.data || []);
+            if (r.meta?.pagination) {
+                setPagination(r.meta.pagination);
+            }
+        });
+    };
+
+    // при смене товара
+    useEffect(() => {
+        if (productId) {
+            setIsExpanded(false);
+            loadRates(1, 2);
+        }
+    }, [productId]);
+
+    const toggleView = (e) => {
+        e.preventDefault();
+
+        if (!isExpanded) {
+            loadRates(1, pagination.totalItems || 100);
+        } else {
+            loadRates(1, 2);
+        }
+
+        setIsExpanded(prev => !prev);
+    };
+
+    const prevPage = (e) => {
+        e.preventDefault();
+        if (pagination.currentPage > 1) {
+            loadRates(pagination.currentPage - 1, pagination.perPage);
+        }
+    };
+
+    const nextPage = (e) => {
+        e.preventDefault();
+        if (pagination.currentPage < pagination.lastPage) {
+            loadRates(pagination.currentPage + 1, pagination.perPage);
+        }
+    };
+
+    const goToPage = (e, page) => {
+        e.preventDefault();
+        loadRates(page, pagination.perPage);
+    };
+
+    if (pagination.totalItems === 0) {
+        return (
+            <div className="border p-2 mt-2 text-center text-muted">
+                Відгуків немає
+            </div>
+        );
+    }
+
+    return (
+        <div className="border p-2 mt-2">
+
+            {/* HEADER */}
+            <div className="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                <span className="fw-bold text-muted small">
+                    Всього відгуків: {pagination.totalItems}
+                </span>
+
+                {pagination.totalItems > 2 && (
+                    <button
+                        onClick={toggleView}
+                        className="btn btn-sm btn-link text-decoration-none p-0"
+                    >
+                        {isExpanded ? "Згорнути" : "Показати всі"}
+                        <i className={`bi ${isExpanded ? "bi-chevron-up" : "bi-chevron-down"} ms-1`} />
+                    </button>
+                )}
+            </div>
+
+            {/* PAGINATION */}
+            {!isExpanded && pagination.lastPage > 1 && (
+                <nav className="d-flex justify-content-center">
+                    <ul className="pagination pagination-sm mb-2">
+
+                        <li className={`page-item ${pagination.currentPage === 1 ? "disabled" : ""}`}>
+                            <span className="page-link" role="button" onClick={prevPage}>
+                                &laquo;
+                            </span>
+                        </li>
+
+                        {Array.from({ length: pagination.lastPage }, (_, i) => i + 1).map(p => (
+                            <li key={p} className={`page-item ${p === pagination.currentPage ? "active" : ""}`}>
+                                <span
+                                    className="page-link"
+                                    role="button"
+                                    onClick={(e) => goToPage(e, p)}
+                                >
+                                    {p}
+                                </span>
+                            </li>
+                        ))}
+
+                        <li className={`page-item ${pagination.currentPage === pagination.lastPage ? "disabled" : ""}`}>
+                            <span className="page-link" role="button" onClick={nextPage}>
+                                &raquo;
+                            </span>
+                        </li>
+                    </ul>
+                </nav>
+            )}
+
+            {/* REVIEWS */}
+            {rates.map(r => (
+                <div key={r.id} className="border-top pt-2 mt-2 text-break">
+                    <div className="d-flex justify-content-between text-muted small">
+                        <span>{r.createdAt?.substring(0, 10)}</span>
+                        <a href={`mailto:${r.user.email}`} className="text-decoration-none">
+                            {r.user.name}
+                        </a>
+                    </div>
+
+                    <div className="mt-1">
+                        {r.text ? <i>{r.text}</i> : <span className="text-muted">— Без коментаря —</span>}
+                    </div>
+
+                    <div className="mt-1 small">
+                        Оцінка: {r.rateStars > 0
+                            ? <b>{r.rateStars}/5</b>
+                            : <span className="text-muted">—</span>}
+                    </div>
+                </div>
+            ))}
+        </div>
     );
 }

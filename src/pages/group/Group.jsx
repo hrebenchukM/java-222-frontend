@@ -9,16 +9,26 @@ const [group, setGroup] = useState({});
 const [pageNum, setPageNum] = useState(1);
 const [lastPageNum, setLastPageNum] = useState(3);
 const {request} = useContext(AppContext);
+const [perPage, setPerPage] = useState(5);
+
+// useEffect(() => {
+//     request(`api://groups/${slug}?page=${pageNum}&perpage=5`, {}, true)
+//         .then(j => {
+
+//             // console.log(j.meta);
+//             setGroup(j.data);
+//             setLastPageNum(j.meta.pagination.lastPage);
+//         });
+// }, [slug, pageNum]);
 
 useEffect(() => {
-    request(`api://groups/${slug}?page=${pageNum}&perpage=4`, {}, true)
+    request(`api://groups/${slug}?page=${pageNum}&perpage=${perPage}`, {}, true)
         .then(j => {
-
-            // console.log(j.meta);
             setGroup(j.data);
             setLastPageNum(j.meta.pagination.lastPage);
         });
-}, [slug, pageNum]);
+}, [slug, pageNum, perPage]);
+
 
     return <>
     <h1>Розділ {group.name}</h1>
@@ -27,12 +37,30 @@ useEffect(() => {
      {group.products.map(p =><ProductCard key={p.id} product={p} />)}
     </div>}
 
-    <div className="w-100 d-flex justify-content-center my-5">
-     <Paginator 
-        pageNum= {pageNum} 
-        setPageNum = {setPageNum} 
-        lastPageNum = {lastPageNum}/>
+ <div className="w-100 d-flex justify-content-between align-items-center my-5">
+
+    <div className="btn-group">
+        {[2, 4, 6].map(n => (
+            <button
+                key={n}
+                className={`btn btn-sm ${perPage === n ? 'btn-primary' : 'btn-outline-primary'}`}
+                onClick={() => {
+                    setPerPage(n);
+                    setPageNum(1);
+                }}
+            >
+                {n}
+            </button>
+        ))}
     </div>
+
+    <Paginator 
+        pageNum={pageNum} 
+        setPageNum={setPageNum} 
+        lastPageNum={lastPageNum}
+    />
+
+</div>
 
     </>;
 }
@@ -56,12 +84,12 @@ function Paginator({ pageNum, setPageNum, lastPageNum }) {
      <nav aria-label="...">
             <ul className="pagination">
                 <li className={`page-item ${pageNum === 1 ? 'disabled' : ''}`}>
-                    <span role="button" className="page-link" onClick={() => pageNum > 1 && setpageNum(1)}>
+                    <span role="button" className="page-link" onClick={() => pageNum > 1 && setPageNum(1)}>
                         <i className="bi bi-skip-backward"></i>
                     </span>
                 </li>
                 <li className={`page-item ${pageNum === 1 ? 'disabled' : ''}`}>
-                    <span role="button" className="page-link" style={{ transform: 'scaleX(-1)' }} onClick={() => pageNum > 1 && setpageNum(pageNum - 1)}>
+                    <span role="button" className="page-link" style={{ transform: 'scaleX(-1)' }} onClick={() => pageNum > 1 && setPageNum(pageNum - 1)}>
                         <i className="bi bi-fast-forward"></i>
                     </span>
                 </li>
@@ -71,7 +99,7 @@ function Paginator({ pageNum, setPageNum, lastPageNum }) {
                         <span 
                             className="page-link" 
                             role={pageNum === p ? undefined : "button"} 
-                            onClick={pageNum === p ? undefined : () => setpageNum(p)}
+                            onClick={pageNum === p ? undefined : () => setPageNum(p)}
                         >
                             {p}
                         </span>
@@ -79,12 +107,12 @@ function Paginator({ pageNum, setPageNum, lastPageNum }) {
                 ))}
 
                 <li className={`page-item ${pageNum === lastPageNum ? 'disabled' : ''}`}>
-                    <span className="page-link" role="button" onClick={() => pageNum < lastPageNum && setpageNum(pageNum + 1)}>
+                    <span className="page-link" role="button" onClick={() => pageNum < lastPageNum && setPageNum(pageNum + 1)}>
                         <i className="bi bi-fast-forward"></i>
                     </span>
                 </li>
                 <li className={`page-item ${pageNum === lastPageNum ? 'disabled' : ''}`}>
-                    <span className="page-link" role="button" onClick={() => pageNum < lastPageNum && setpageNum(lastPageNum)}>
+                    <span className="page-link" role="button" onClick={() => pageNum < lastPageNum && setPageNum(lastPageNum)}>
                         <i className="bi bi-skip-forward"></i>
                     </span>
                 </li>
