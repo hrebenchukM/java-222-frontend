@@ -1,0 +1,149 @@
+.footer {
+  background-color: #7C3AED;
+  color: white;
+  padding: clamp(24px, 4vw, 40px) 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.footer-links {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.footer-links {
+  display: flex;
+  gap: clamp(24px, 6vw, 80px);
+  flex-wrap: wrap;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.footer-column a {
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  transition: opacity 0.2s;
+}
+
+.footer-column a:hover {
+  opacity: 0.8;
+}
+
+.footer-info {
+  display: flex;
+  gap: clamp(16px, 3vw, 40px);
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 250px;
+}
+
+.info-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.info-item span {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.footer-language {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-language label {
+  font-size: 14px;
+}
+
+.language-select {
+  padding: 8px 32px 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  background-color: transparent;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+}
+
+.language-select option {
+  background-color: #7C3AED;
+  color: white;
+}
+
+@media (max-width: 992px) {
+  .footer-links {
+    gap: 32px;
+  }
+
+  .footer-column {
+    min-width: 150px;
+  }
+
+  .footer-info {
+    gap: 20px;
+  }
+
+  .info-item {
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer-column {
+    min-width: auto;
+  }
+
+  .footer-info {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .info-item {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .footer-language {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .language-select {
+    width: 100%;
+  }
+}

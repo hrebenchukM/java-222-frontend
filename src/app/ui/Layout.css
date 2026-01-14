@@ -1,59 +1,6 @@
-body {
-  margin: 0;
-  padding: 0;
-}
-
-#root {
-  min-width: 100vw;
+.layout {
   min-height: 100vh;
-  margin: 0;
-  padding: 0;
+  background-color: #f3f2ef;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-
-main {
-  flex: 1;
-}
-
-.cart-btn-layout {
-  position: relative;
-}
-.cart-btn-layout span{
-  position: absolute;
-  top: -.5rem;
-  right: -.5rem;
-  display: block;
-  border-radius: 50%;
-  background-color: rgb(18, 211, 134);
-  width: 1.5rem;
-  height: 1.5rem;
-  text-align: center;
-}
-
-.nav-auth-block {
-  display: flex;
-  flex-direction: row;
-  justify-content: end;
-  align-items: center;
-  flex: 0.5;
-  min-width: 5em;
-}
-.v-center {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.link-to-profile {
-  background-color: maroon;
-  border-radius: 50%;
-  color: snow;
-  font-size: large;
-  font-weight: 700;
-  margin: 0 .75em 0 0;
-  text-align: center;
-  text-decoration: none;
-  width: 1.75em;
-  height: 1.75em;
 }
