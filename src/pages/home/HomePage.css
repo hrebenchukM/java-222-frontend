@@ -18,6 +18,9 @@
 }
 
 .main-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; 
   min-height: 500px;
   width: 100%;
 }

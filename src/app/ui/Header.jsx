@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AppContext from '../../features/appContext/AppContext';
 import AuthModal from './AuthModal';
 import './Header.css';
+import logoImg from '../../shared/assets/illustrations/linkedin_icon.png';
+
 
 const Header = () => {
   const navigate = useNavigate();
@@ -40,12 +42,11 @@ const Header = () => {
 
             <div className="header-left">
               <div className="logo" onClick={() => navigate('/')}>
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                  <rect width="32" height="32" rx="6" fill="white" />
-                  <path d="M10 22V13H13V22H10Z" fill="#7C3AED" />
-                  <path d="M15 22V10H18V22H15Z" fill="#7C3AED" />
-                  <path d="M20 22V16H23V22H20Z" fill="#7C3AED" />
-                </svg>
+                         <img
+                           src={logoImg} width="64" height="64"
+                           alt="LinkedIn Analogue"
+                           className="landing-logo-img"
+                         />
               </div>
 
               <div className="search-box">
@@ -56,29 +57,42 @@ const Header = () => {
             <nav className="header-nav">
 
               <button
-                onClick={() => navigate('/')}
-                className={`nav-item ${isActive('/') ? 'active' : ''}`}
+                onClick={() => navigate('/app')}
+                className={`nav-item ${isActive('/app') ? 'active' : ''}`}
               >
                 <Home size={20} />
                 <span>Home</span>
               </button>
 
-              <button className="nav-item">
-                <Users size={20} />
-                <span>Network</span>
-              </button>
+                <button
+                  onClick={() => navigate('/app/network')}
+                  className={`nav-item ${isActive('/app/network') ? 'active' : ''}`}
+                >
+                  <Users size={20} />
+                  <span>Network</span>
+                </button>
 
-              <button className="nav-item">
+
+                <button
+                  onClick={() => navigate('/app/vacancies')}
+                  className={`nav-item ${isActive('/app/vacancies') ? 'active' : ''}`}
+                >
                 <Briefcase size={20} />
                 <span>Vacancies</span>
               </button>
 
-              <button className="nav-item">
+                <button
+                  onClick={() => navigate('/app/messages')}
+                  className={`nav-item ${isActive('/app/messages') ? 'active' : ''}`}
+                >
                 <MessageCircle size={20} />
                 <span>Messages</span>
               </button>
 
-              <button className="nav-item">
+                <button
+                  onClick={() => navigate('/app/notifications')}
+                  className={`nav-item ${isActive('/app/notifications') ? 'active' : ''}`}
+                >
                 <Bell size={20} />
                 <span>Notifications</span>
               </button>
@@ -96,7 +110,7 @@ const Header = () => {
                   <button
                     className={`nav-item profile-item ${isActive('/profile') ? 'active' : ''}`}
                     title={profileTitle}
-                    onClick={() => navigate('/profile')}
+                    onClick={() => navigate('/app/profile')}
                   >
                     <img
                       src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg"
@@ -104,7 +118,7 @@ const Header = () => {
                     />
                     <span>My profile</span>
                   </button>
-
+{/* 
                   <button
                     className="nav-item"
                     title={`Товарів: ${totalItems}\nСума: ₴${cart?.price?.toFixed(2) ?? '0.00'}`}
@@ -119,7 +133,7 @@ const Header = () => {
                     title="Logout"
                   >
                     ⎋
-                  </button>
+                  </button> */}
                 </>
               )}
             </nav>

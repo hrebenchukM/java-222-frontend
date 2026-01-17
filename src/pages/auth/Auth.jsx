@@ -5,6 +5,7 @@ import AppContext from '../../features/appContext/AppContext';
 import Base64 from '../../shared/base64/Base64';
 import './Auth.css';
 import { useContext, useRef } from "react";
+import logoImg from '../../shared/assets/illustrations/linkedin_icon.png';
 
 
 const AuthPage = () => {
@@ -19,7 +20,7 @@ const AuthPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
-    email: '',
+    login: '',
     password: '',
     confirmPassword: ''
   });
@@ -41,7 +42,7 @@ const AuthPage = () => {
     }
 
     const credentials = Base64.encode(
-      `${formData.email}:${formData.password}`
+      `${formData.login}:${formData.password}`
     );
 
     request('api://user', {
@@ -52,19 +53,20 @@ const AuthPage = () => {
     })
       .then((jwt) => {
         setToken(jwt);
-        navigate('/');
+        navigate('/app');
       })
       .catch(() => alert('Invalid login or password'));
   };
   return (
     <div className="auth-page">
-      <div className="auth-logo">
-        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-          <rect width="64" height="64" rx="12" fill="#7C3AED"/>
-          <path d="M24 24h-6v28h6v-28zm22 0h-6v9c0 1.66-1.34 3-3 3s-3-1.34-3-3v-9h-6v9c0 4.98 4.02 9 9 9s9-4.02 9-9v-9z" fill="white"/>
-        </svg>
-      </div>
 
+        <div className="auth-logo">
+          <img
+            src={logoImg} width="64" height="64"
+            alt="LinkedIn Analogue"
+            className="landing-logo-img"
+          />
+        </div>
       <div className="auth-card">
         <div className="auth-header">
           <h1 className="auth-title">Welcome to your</h1>
@@ -76,7 +78,7 @@ const AuthPage = () => {
             <div className="auth-input-icon">
               <Mail size={20} />
             </div>
-            <input
+            {/* <input
               type="email"
               name="email"
               placeholder="Email or phone number"
@@ -84,7 +86,17 @@ const AuthPage = () => {
               value={formData.email}
               onChange={handleChange}
               required
+            /> */}
+            <input
+              type="text"
+              name="login"
+              placeholder="Login"
+              className="auth-input"
+              value={formData.login}
+              onChange={handleChange}
+              required
             />
+
           </div>
 
           <div className="auth-input-group">

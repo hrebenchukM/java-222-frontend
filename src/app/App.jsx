@@ -12,7 +12,12 @@ import AuthPage from '../pages/auth/Auth';
 // app
 import Layout from './ui/Layout';
 import HomePage from '../pages/home/HomePage';
-import Profile from '../pages/profile/Profile';
+import NetworkPage from '../pages/network/NetworkPage';
+import VacanciesPage from '../pages/vacancies/VacanciesPage';
+import MessagesPage from '../pages/messages/MessagesPage';
+import NotificationsPage from '../pages/notifications/NotificationsPage';
+import ProfilePage from '../pages/profile/ProfilePage';
+import PortfolioPage from '../pages/portfolio/PortfolioPage';
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -74,7 +79,13 @@ export default function App() {
             element={token ? <Layout /> : <Navigate to="/landing" />}
           >
             <Route index element={<HomePage />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="network" element={<NetworkPage />} />
+            <Route path="vacancies" element={<VacanciesPage />} />
+            <Route path="messages" element={<MessagesPage />} />
+            <Route path="notifications" element={<NotificationsPage />} />
+            <Route path="profile/:username" element={<ProfilePage />} />
+            <Route path="portfolio/:username" element={<PortfolioPage />} />
           </Route>
 
           {/* FALLBACK */}
