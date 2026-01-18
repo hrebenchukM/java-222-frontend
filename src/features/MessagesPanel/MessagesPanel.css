@@ -159,6 +159,13 @@
   background: #7C3AED;
   color: white;
 }
+.message-empty-img {
+    width: clamp(80px, 20vw, 120px);
+    height: auto;
+    margin-bottom: 16px;
+            
+}
+
 
 @media (max-width: 768px) {
   .messages-panel {

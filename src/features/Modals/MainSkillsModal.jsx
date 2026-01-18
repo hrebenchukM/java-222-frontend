@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
+import Modal from '../../app/ui/Modal';
 
 const MainSkillsModal = ({ isOpen, onClose }) => {
   const [expandedCategories, setExpandedCategories] = useState(['Prototyping']);

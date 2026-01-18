@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 import { Home, Users, Briefcase, MessageCircle, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AppContext from '../../features/appContext/AppContext';
-import AuthModal from './AuthModal';
+
 import './Header.css';
 import logoImg from '../../shared/assets/illustrations/linkedin_icon.png';
 
@@ -141,7 +141,6 @@ const Header = () => {
         </div>
       </header>
 
-      <AuthModal />
     </>
   );
 };

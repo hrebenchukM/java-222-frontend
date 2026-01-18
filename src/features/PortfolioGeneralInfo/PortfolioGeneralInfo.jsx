@@ -1,8 +1,11 @@
-import React from 'react';
-import { Globe } from 'lucide-react';
+import React, { useState } from 'react';
+import { Globe, Crown, ChevronRight } from 'lucide-react';
 import '../PortfolioGeneralInfo/PortfolioGeneralInfo.css';
+import MainSkillsModal from '../Modals/MainSkillsModal';
 
 const PortfolioGeneralInfo = () => {
+      const [isMainSkillsModalOpen, setIsMainSkillsModalOpen] = useState(false);
+
   return (
     <div className="general-info-card">
       <h2>General Information</h2>
@@ -31,6 +34,22 @@ const PortfolioGeneralInfo = () => {
           </svg>
         </button>
       </div>
+           <button
+        className="main-skills-section"
+        onClick={() => setIsMainSkillsModalOpen(true)}
+      >
+        <Crown size={24} className="skills-icon" />
+        <div className="skills-content">
+          <p className="skills-label">Main skills</p>
+          <p className="skills-list">Prototyping • User Interface Design (UI) • User Experience (UX) • Wireframing</p>
+        </div>
+        <ChevronRight size={24} className="skills-arrow" />
+      </button>
+
+      <MainSkillsModal
+        isOpen={isMainSkillsModalOpen}
+        onClose={() => setIsMainSkillsModalOpen(false)}
+      />
     </div>
   );
 };

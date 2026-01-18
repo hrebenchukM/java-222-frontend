@@ -1,8 +1,8 @@
 import React from 'react';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Filter, MoreVertical } from 'lucide-react';
 import '../ChatSidebar/ChatSidebar.css';
 
-const ChatSidebar = ({ activeTab, setActiveTab, chatUsers, selectedChat, onSelectChat, showChat }) => {
+const ChatSidebar = ({ activeTab, setActiveTab, chatUsers, selectedChat, onSelectChat, showChat, onNewMessage, onOpenFilters, onOpenSettings }) => {
   return (
     <div className={`chat-sidebar ${showChat ? 'show-chat' : ''}`}>
       <div className="chat-sidebar-header">
@@ -12,7 +12,7 @@ const ChatSidebar = ({ activeTab, setActiveTab, chatUsers, selectedChat, onSelec
             onClick={() => setActiveTab('chats')}
           >
             Chats
-            <Plus size={16} />
+            <Plus size={16} onClick={(e) => { e.stopPropagation(); onNewMessage?.(); }} style={{ cursor: 'pointer' }} />
           </button>
           <button
             className={`chat-tab ${activeTab === 'archived' ? 'active' : ''}`}
@@ -21,9 +21,47 @@ const ChatSidebar = ({ activeTab, setActiveTab, chatUsers, selectedChat, onSelec
             Archived
           </button>
         </div>
-        <div className="chat-search">
-          <Search size={18} />
-          <input type="text" placeholder="Search" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '12px' }}>
+          <div className="chat-search" style={{ flex: 1 }}>
+            <Search size={18} />
+            <input type="text" placeholder="Search" />
+          </div>
+          <button
+            onClick={onOpenFilters}
+            style={{
+              padding: '8px',
+              border: 'none',
+              background: 'white',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 0.3s'
+            }}
+            onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
+            onMouseLeave={(e) => e.target.style.background = 'white'}
+          >
+            <Filter size={18} color="#6b7280" />
+          </button>
+          <button
+            onClick={onOpenSettings}
+            style={{
+              padding: '8px',
+              border: 'none',
+              background: 'white',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background 0.3s'
+            }}
+            onMouseEnter={(e) => e.target.style.background = '#f3f4f6'}
+            onMouseLeave={(e) => e.target.style.background = 'white'}
+          >
+            <MoreVertical size={18} color="#6b7280" />
+          </button>
         </div>
       </div>
 

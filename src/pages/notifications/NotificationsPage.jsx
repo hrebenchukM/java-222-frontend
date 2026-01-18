@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import nonewNotificationsImg from '../../shared/assets/illustrations/no-new-notifications.png';
 
 import './NotificationsPage.css';
 import MessagesPanel from '../../features/MessagesPanel/MessagesPanel';
@@ -46,28 +46,9 @@ const NotificationsPage = ({ onNavigate }) => {
 
               <div className="notifications-empty">
                 <div className="empty-illustration">
-                  <svg width="220" height="180" viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="30" y="30" width="160" height="120" rx="8" fill="#F5F5FF" />
-                    <rect x="35" y="35" width="150" height="110" rx="6" fill="white" />
-
-                    <g opacity="0.4">
-                      <rect x="50" y="60" width="50" height="50" rx="8" fill="#E8E4FF" />
-                      <path d="M75 70L65 85L70 90" stroke="#7C3AED" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="75" cy="77" r="3" fill="#7C3AED" />
-                      <path d="M75 95L75 100" stroke="#7C3AED" strokeWidth="4" strokeLinecap="round" />
-                    </g>
-
-                    <g>
-                      <rect x="120" y="50" width="60" height="60" rx="8" fill="#E8E4FF" />
-                      <path d="M150 65L135 85L142 92" stroke="#7C3AED" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-                      <circle cx="150" cy="75" r="4" fill="#7C3AED" />
-                      <path d="M150 98L150 105" stroke="#7C3AED" strokeWidth="5" strokeLinecap="round" />
-                    </g>
-
-                    <circle cx="30" cy="30" r="3" fill="#E8E4FF" />
-                    <circle cx="195" cy="140" r="4" fill="#E8E4FF" />
-                    <circle cx="25" cy="145" r="3" fill="#E8E4FF" />
-                  </svg>
+                       <img width="220" height="180"
+                        src={nonewNotificationsImg}
+                        />
                 </div>
 
                 <h2 className="empty-title">No new notifications</h2>

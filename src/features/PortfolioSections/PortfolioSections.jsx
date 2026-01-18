@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../PortfolioSections/PortfolioSections.css';
 
 const PortfolioSections = () => {
+  const [activeRecommendationTab, setActiveRecommendationTab] = useState('received');
+
   const experiences = [
     {
       position: "Lead UI/UX Designer",
@@ -47,6 +49,40 @@ const PortfolioSections = () => {
         "Contributed user experiences with collaboration of product designers with business objectives, ensuring seamless transitions",
         "Collaborated with developers and stakeholders to deliver design work with business objectives ensuring smooth project execution and delivering high-quality user experiences."
       ]
+    }
+  ];
+
+  const receivedRecommendations = [
+    {
+      name: "Sarah Jones",
+      title: "Visual Designer at Bright Horizons Design Studio",
+      relation: "September 20, 2018, Sarah was a colleague of David at Bright Horizons",
+      avatar: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=1",
+      content: "I had the pleasure of working with Sarah J. on a complex product redesign project, and I was consistently impressed by her talent, dedication, and collaborative spirit. As a visual designer, Sarah has an extraordinary ability to bring concepts to life with striking visuals that not only captivate users but also align perfectly with the overall product strategy.\n\nWhat sets Sarah apart is her meticulous attention to detail and her passion for storytelling through design. Whether she's crafting a brand identity or developing detailed UI mockups, her work always feels intentional and purposeful. Her ability to translate abstract ideas into cohesive and engaging designs is truly remarkable.\n\nSarah is also an exceptional team player. She communicates her ideas clearly, listens actively to feedback, and always brings a positive attitude to the table. During our collaboration, her ability to work seamlessly with developers, product managers, and other designers helped streamline the design process and ensured the project's success.\n\nI highly recommend Sarah to any organization or team seeking a visual designer who brings both creative vision and a strong sense of execution. She's an invaluable asset to any project, and I'm excited to see all the amazing work she'll continue to create."
+    },
+    {
+      name: "Mark Owens",
+      title: "Interaction Designer at NextWave Interfaces",
+      relation: "April 15, 2019, Mark worked directly with David at NextWave",
+      avatar: "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=1",
+      content: "Working with Mark R. was an incredible experience that left a lasting impact on our team and the projects we delivered together. As an interaction designer, Mark combines a deep understanding of user behavior with an intuitive sense of how to create seamless, engaging digital experiences.\n\nMark's strength lies in his ability to think holistically about design. He doesn't just focus on individual screens or interactions—he ensures that every detail contributes to a cohesive and meaningful user journey. During our time working together, he took on the challenge of designing complex multi-step workflows, and his solutions consistently struck the perfect balance between usability and elegance.\n\nBeyond his technical expertise, Mark is a fantastic collaborator. He's proactive in identifying potential design challenges early and approaches problem-solving with creativity and enthusiasm. His ability to work closely with developers ensured that his designs were implemented flawlessly, and his openness to feedback made him a joy to work with.\n\nI wholeheartedly recommend Mark to any team looking for a skilled and forward-thinking interaction designer. His work speaks for itself, and his dedication to creating outstanding user experiences is truly inspiring."
+    }
+  ];
+
+  const givenRecommendations = [
+    {
+      name: "Emily Parker",
+      title: "Product Manager at TechVision Solutions",
+      relation: "June 10, 2020, David worked with Emily at TechVision",
+      avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=1",
+      content: "I had the privilege of working alongside Emily on several high-impact product initiatives, and I can confidently say she is one of the most talented and strategic product managers I've encountered. Emily has an exceptional ability to balance user needs, business objectives, and technical constraints to deliver products that truly make a difference.\n\nHer strategic thinking and data-driven approach helped our team prioritize features effectively and make informed decisions that led to significant improvements in user engagement and satisfaction. Emily's communication skills are outstanding—she can articulate complex ideas clearly to stakeholders at all levels and ensure everyone is aligned on the product vision.\n\nWhat I appreciate most about Emily is her genuine passion for creating user-centric products. She consistently advocates for the user while maintaining a pragmatic approach to product development. Her leadership and collaborative spirit make her an invaluable asset to any product team."
+    },
+    {
+      name: "Alex Thompson",
+      title: "Frontend Developer at CodeCraft Labs",
+      relation: "January 5, 2021, David collaborated with Alex on multiple projects",
+      avatar: "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=1",
+      content: "Working with Alex has been an absolute pleasure and a tremendous learning experience. As a frontend developer, Alex possesses a rare combination of technical excellence and design sensibility that makes collaboration seamless and highly productive.\n\nAlex's code is clean, maintainable, and performant. He has a deep understanding of modern web technologies and consistently delivers pixel-perfect implementations that bring designs to life exactly as intended. What sets Alex apart is his proactive approach—he often identifies potential improvements or technical challenges early in the process and proposes elegant solutions.\n\nBeyond his technical skills, Alex is a wonderful team player. He's patient, communicative, and always willing to explain technical concepts in a way that non-developers can understand. His enthusiasm for his craft is contagious, and his dedication to quality is evident in everything he builds.\n\nI highly recommend Alex to any team seeking a skilled frontend developer who can bridge the gap between design and implementation while maintaining the highest standards of code quality."
     }
   ];
 
@@ -121,26 +157,40 @@ const PortfolioSections = () => {
       <div className="recommendations-section">
         <h2>Recommendations</h2>
         <div className="recommendations-tabs">
-          <button className="rec-tab active">Received</button>
-          <button className="rec-tab">Given</button>
+          <button
+            className={`rec-tab ${activeRecommendationTab === 'received' ? 'active' : ''}`}
+            onClick={() => setActiveRecommendationTab('received')}
+          >
+            Received
+          </button>
+          <button
+            className={`rec-tab ${activeRecommendationTab === 'given' ? 'active' : ''}`}
+            onClick={() => setActiveRecommendationTab('given')}
+          >
+            Given
+          </button>
         </div>
-        <div className="recommendation-entry">
-          <div className="rec-header">
-            <img
-              src="https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&dpr=1"
-              alt="Jonathan Mitchell"
-              className="rec-avatar"
-            />
-            <div className="rec-info">
-              <h3>Jonathan Mitchell</h3>
-              <p className="rec-title">Creative Director at Dropbox Studios - Head of Visual Design</p>
-              <p className="rec-relation">September 20, 2018, Jonathan Mitchell was senior to David in different companies</p>
+        {(activeRecommendationTab === 'received' ? receivedRecommendations : givenRecommendations).map((rec, index) => (
+          <div key={index} className="recommendation-entry">
+            <div className="rec-header">
+              <img
+                src={rec.avatar}
+                alt={rec.name}
+                className="rec-avatar"
+              />
+              <div className="rec-info">
+                <h3>{rec.name}</h3>
+                <p className="rec-title">{rec.title}</p>
+                <p className="rec-relation">{rec.relation}</p>
+              </div>
+            </div>
+            <div className="rec-content">
+              {rec.content.split('\n\n').map((paragraph, pIndex) => (
+                <p key={pIndex}>{paragraph}</p>
+              ))}
             </div>
           </div>
-          <div className="rec-content">
-            <p>I've had the pleasure of collaborating with David across several projects, and I can confidently say he's one of the most talented and dedicated UX designers I've worked with. David consistently brings innovative approaches, excellent execution, and positive attitude to every project he touches.</p>
-          </div>
-        </div>
+        ))}
         <button className="show-more-button">Show more</button>
       </div>
 

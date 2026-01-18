@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Sliders, Bookmark, Plus } from 'lucide-react';
 import '../VacanciesSidebar/VacanciesSidebar.css';
-import { useEffect, useState } from 'react';
+import PostJobModal from '../Modals/PostJobModal';
 
 const VacanciesSidebar = () => {
+  const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
 
   return (
     <>
@@ -19,12 +20,12 @@ const VacanciesSidebar = () => {
         </a>
       </nav>
 
-
-      <button className="post-vacancy-btn">
-        <Plus size={18} />
-        <span>Post a vacancy</span>
-      </button>
-    </div>
+    <button className="post-vacancy-btn" onClick={() => setIsPostJobModalOpen(true)}>
+          <Plus size={18} />
+          <span>Post a vacancy</span>
+        </button>
+      </div>
+      <PostJobModal isOpen={isPostJobModalOpen} onClose={() => setIsPostJobModalOpen(false)} />
        
     </>
   );

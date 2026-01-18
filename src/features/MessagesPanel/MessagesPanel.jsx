@@ -1,6 +1,7 @@
 import React from 'react';
 import { MoreHorizontal, Edit, SmilePlus, Mail } from 'lucide-react';
 import '../MessagesPanel/MessagesPanel.css';
+import messagesIllustration from '../../shared/assets/illustrations/messages.png';
 
 const MessagesPanel = ({ onNavigate }) => {
   return (
@@ -44,7 +45,12 @@ const MessagesPanel = ({ onNavigate }) => {
 
       <div className="messages-empty">
         <div className="empty-icon">
-          <Mail size={80} color="#D0D0FF" />
+           <img 
+            src={messagesIllustration}
+            alt="No messages"
+            className="message-empty-img"
+            />
+          {/* <Mail size={80} color="#D0D0FF" /> */}
         </div>
         <h4>No messages yet</h4>
         <p>Contact a member and start a discussion</p>

@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Camera, Edit, ExternalLink } from 'lucide-react';
 import '../ProfileHeader/ProfileHeader.css';
+import RequestRecommendationModal from '../Modals/RequestRecommendationModal';
 
 const ProfileHeader = () => {
+     const [isRecommendationModalOpen, setIsRecommendationModalOpen] = useState(false);
+
   return (
+    <>
     <div className="profile-header-card">
       <div className="profile-banner">
         <button className="camera-button">
@@ -48,11 +52,14 @@ const ProfileHeader = () => {
           <div className="profile-actions">
             <button className="btn-primary">Open to</button>
             <button className="btn-secondary">Add profile section</button>
+            <button className="btn-secondary" onClick={() => setIsRecommendationModalOpen(true)}>Request recommendation</button>
             <button className="btn-secondary">More</button>
           </div>
         </div>
       </div>
     </div>
+          <RequestRecommendationModal isOpen={isRecommendationModalOpen} onClose={() => setIsRecommendationModalOpen(false)} />
+    </>
   );
 };
 

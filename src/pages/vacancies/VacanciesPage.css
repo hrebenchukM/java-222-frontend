@@ -288,3 +288,16 @@
     font-size: 12px;
   }
 }
+@media (max-width: 576px) {
+  .vacancies-section {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 15px;
+  }
+
+  .section-subtitle {
+    font-size: 11px;
+  }
+}

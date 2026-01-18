@@ -4,12 +4,18 @@ import './MessagesPage.css';
 import ChatSidebar from '../../features/ChatSidebar/ChatSidebar';
 import ChatMain from '../../features/ChatMain/ChatMain';
 import ChatProfilePanel from '../../features/ChatProfilePanel/ChatProfilePanel';
+import NewMessageModal from '../../features/Modals/NewMessageModal';
+import MessageFiltersModal from '../../features/Modals/MessageFiltersModal';
+import MessageSettingsModal from '../../features/Modals/MessageSettingsModal';
 
 const MessagesPage = ({ onNavigate }) => {
   const [selectedChat, setSelectedChat] = useState('1');
   const [activeTab, setActiveTab] = useState('chats');
   const [showChat, setShowChat] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+ const [isNewMessageModalOpen, setIsNewMessageModalOpen] = useState(false);
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   const chatUsers = [
     {
@@ -131,14 +137,18 @@ const MessagesPage = ({ onNavigate }) => {
   };
 
   return (
+    <>
      <div className={`messages-page ${showProfile ? 'profile-open' : ''}`}>
-        <ChatSidebar
+           <ChatSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           chatUsers={chatUsers}
           selectedChat={selectedChat}
           onSelectChat={handleSelectChat}
           showChat={showChat}
+          onNewMessage={() => setIsNewMessageModalOpen(true)}
+          onOpenFilters={() => setIsFiltersModalOpen(true)}
+          onOpenSettings={() => setIsSettingsModalOpen(true)}
         />
         <ChatMain
           selectedUser={selectedUser}
@@ -153,6 +163,11 @@ const MessagesPage = ({ onNavigate }) => {
           onBackClick={() => setShowProfile(false)}
         />
       </div>
+      
+            <NewMessageModal isOpen={isNewMessageModalOpen} onClose={() => setIsNewMessageModalOpen(false)} />
+      <MessageFiltersModal isOpen={isFiltersModalOpen} onClose={() => setIsFiltersModalOpen(false)} />
+      <MessageSettingsModal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} />
+        </>
   );
 };
 

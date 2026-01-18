@@ -3,9 +3,8 @@ import { X } from 'lucide-react';
 import '../ProfileSkills/ProfileSkills.css';
 
 const ProfileSkills = () => {
-      const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
+      <>
     <div className="skills-card">
       <div className="section-header">
         <h2>Skills</h2>
@@ -22,6 +21,7 @@ const ProfileSkills = () => {
       </div>
       <button className="btn-add">Add skills</button>
     </div>
+         </>
   );
 };
 

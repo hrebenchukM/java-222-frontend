@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Edit } from 'lucide-react';
 import '../ProfileEducation/ProfileEducation.css';
+import AddEducationModal from '../Modals/AddEducationModal';
+import AddCertificateModal from '../Modals/AddCertificateModal';
 
 const ProfileEducation = () => {
+      const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
   return (
+      <>
     <div className="education-card">
       <div className="section-header">
         <h2>Education</h2>
         <div className="section-actions">
-          <button className="icon-button">
-            <Plus size={18} />
-          </button>
+            <button className="icon-button" onClick={() => setIsModalOpen(true)}>
+              <Plus size={18} />
+            </button>
           <button className="icon-button">
             <Edit size={18} />
           </button>
@@ -29,7 +34,13 @@ const ProfileEducation = () => {
           <p className="education-date">2014-2018</p>
         </div>
       </div>
+        <div className="education-actions">
+            <button className="btn-add" onClick={() => setIsCertificateModalOpen(true)}>Add certificate</button>    
+        </div>
     </div>
+         <AddCertificateModal isOpen={isCertificateModalOpen} onClose={() => setIsCertificateModalOpen(false)} />
+        <AddEducationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
   );
 };
 
