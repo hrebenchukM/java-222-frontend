@@ -34,6 +34,132 @@
   color: white;
 }
 
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.notification-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.notification-item.unread {
+  background: #f9f9ff;
+  border-color: #e8e4ff;
+}
+
+.notification-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.notification-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.notification-icon.likes {
+  background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+  color: white;
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-text {
+  font-size: 14px;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  line-height: 1.5;
+}
+
+.notification-text strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+.notification-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+}
+
+.notification-excerpt {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 4px 0;
+  font-style: italic;
+}
+
+.notification-position {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+  margin: 4px 0;
+}
+
+.notification-location {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 2px 0 4px 0;
+}
+
+.notification-status {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+  display: block;
+}
+
+.notification-dot {
+  width: 8px;
+  height: 8px;
+  background: #7c3aed;
+  border-radius: 50%;
+  position: absolute;
+  right: 16px;
+  top: 20px;
+  flex-shrink: 0;
+}
+
 .notifications-empty {
   display: flex;
   flex-direction: column;

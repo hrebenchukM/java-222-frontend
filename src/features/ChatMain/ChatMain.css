@@ -198,6 +198,33 @@
   background: #e5e7eb;
 }
 
+.chat-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.chat-search-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+}
+
+.chat-search-input:focus {
+  border-color: #7c3aed;
+}
+
+.search-results-count {
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
 @media (max-width: 992px) {
   .back-button {
     display: flex;

@@ -6,9 +6,12 @@ import MessagesPanel from '../../features/MessagesPanel/MessagesPanel';
 import NetworkSidebar from '../../features/NetworkSideBar/NetworkSidebar';
 import ConnectionCard from '../../features/ConnectionCard/ConnectionCard';
 import EventPanel from '../../features/EventPanel/EventPanel';
+import ManageNetworkModal from '../../features/Modals/ManageNetworkModal/ManageNetworkModal';
 
 const NetworkPage = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('new');
+  const [isManageNetworkModalOpen, setIsManageNetworkModalOpen] = useState(false);
+  const [networkModalTab, setNetworkModalTab] = useState('contacts');
 
   const connections = [
     {
@@ -50,12 +53,17 @@ const NetworkPage = ({ onNavigate }) => {
   ];
 
   return (
-   
-      <main className="main-content">
+    <>
+     <main className="main-content">
         <div className="container">
           <div className="network-grid">
             <aside className="sidebar-left">
-              <NetworkSidebar />
+              <NetworkSidebar
+                onOpenManageNetwork={(tab) => {
+                  setNetworkModalTab(tab);
+                  setIsManageNetworkModalOpen(true);
+                }}
+              />
             </aside>
 
             <section className="network-main">
@@ -91,11 +99,18 @@ const NetworkPage = ({ onNavigate }) => {
             </section>
 
             <aside className="sidebar-right">
-              <MessagesPanel onNavigate={onNavigate} />
+              <MessagesPanel onNavigate={onNavigate} onSelectChat={() => {}} />
             </aside>
           </div>
         </div>
       </main>
+      <ManageNetworkModal
+        isOpen={isManageNetworkModalOpen}
+        onClose={() => setIsManageNetworkModalOpen(false)}
+        initialTab={networkModalTab}
+        onNavigate={onNavigate}
+      />
+</>
   );
 };
 

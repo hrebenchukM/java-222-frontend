@@ -8,12 +8,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
   padding: 20px;
-  z-index: 9999;
 }
 
 .modal-content {
-  background: rgb(255, 255, 255);
+  background: white;
   border-radius: 12px;
   max-width: 600px;
   width: 100%;
@@ -198,5 +198,19 @@
 
   .modal-body {
     padding: 20px;
+  }
+}
+@media (max-width: 480px) {
+  .modal-header {
+    padding: 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
   }
 }

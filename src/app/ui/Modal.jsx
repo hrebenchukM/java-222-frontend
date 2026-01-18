@@ -2,13 +2,13 @@ import React from 'react';
 import './Modal.css';
 import Portal from './Portal';
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children,className = '' }) => {
   if (!isOpen) return null;
 
   return (
     <Portal>
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+ <div className="modal-overlay" onClick={onClose}>
+      <div className={`modal-content ${className}`} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{title}</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
@@ -23,3 +23,5 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 };
 
 export default Modal;
+
+

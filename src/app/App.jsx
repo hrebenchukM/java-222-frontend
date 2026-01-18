@@ -18,6 +18,10 @@ import MessagesPage from '../pages/messages/MessagesPage';
 import NotificationsPage from '../pages/notifications/NotificationsPage';
 import ProfilePage from '../pages/profile/ProfilePage';
 import PortfolioPage from '../pages/portfolio/PortfolioPage';
+import GroupPage from '../pages/group/GroupPage';
+import EventPage from '../pages/event/EventPage';
+import CompanyPage from '../pages/company/CompanyPage';
+import ChatMain from '../features/ChatMain/ChatMain';
 
 export default function App() {
   const [token, setToken] = useState(null);
@@ -82,10 +86,19 @@ export default function App() {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="network" element={<NetworkPage />} />
             <Route path="vacancies" element={<VacanciesPage />} />
-            <Route path="messages" element={<MessagesPage />} />
+            {/* <Route path="messages" element={<MessagesPage />} /> */}
+            <Route path="messages" element={<MessagesPage />}>
+              <Route path=":chatId" element={<ChatMain />} />
+            </Route>
+
+
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="profile/:username" element={<ProfilePage />} />
             <Route path="portfolio/:username" element={<PortfolioPage />} />
+            <Route path="group/:id" element={<GroupPage />} />
+            <Route path="event/:id" element={<EventPage />} />
+            <Route path="company/:id" element={<CompanyPage />} />
+                
           </Route>
 
           {/* FALLBACK */}

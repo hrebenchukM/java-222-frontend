@@ -6,13 +6,25 @@ import RequestRecommendationModal from '../Modals/RequestRecommendationModal';
 const ProfileHeader = () => {
      const [isRecommendationModalOpen, setIsRecommendationModalOpen] = useState(false);
 
+  const handleBannerUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        alert(`Banner image selected: ${file.name}`);
+      }
+    };
+    input.click();
+  };
   return (
     <>
     <div className="profile-header-card">
       <div className="profile-banner">
-        <button className="camera-button">
-          <Camera size={20} />
-        </button>
+         <button className="camera-button" onClick={handleBannerUpload}>
+            <Camera size={20} />
+          </button>
       </div>
       <div className="profile-main-info">
         <div className="profile-top-section">
