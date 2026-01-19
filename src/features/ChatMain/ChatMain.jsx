@@ -8,15 +8,6 @@ const ChatMain = ({ selectedUser, messages, showChat, onBackClick, onAvatarClick
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { chatId } = useParams();
-  const navigate = useNavigate();
-   if (!chatId || !selectedUser) {
-    return (
-      <div className="chat-main chat-empty">
-        <p>Select a conversation</p>
-      </div>
-    );
-  }
   const handleCall = () => {
     alert(`Calling ${selectedUser?.name}...`);
   };
@@ -72,7 +63,7 @@ const ChatMain = ({ selectedUser, messages, showChat, onBackClick, onAvatarClick
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             className="back-button"
-            onClick={() => navigate('/app/messages')}
+            onClick={onBackClick}
           >
             ←
           </button>
@@ -80,7 +71,7 @@ const ChatMain = ({ selectedUser, messages, showChat, onBackClick, onAvatarClick
             <img
               src={selectedUser?.avatar}
               alt={selectedUser?.name}
-              onClick={() => navigate(`/app/profile/${selectedUser.username ?? 'me'}`)}
+              onClick={onAvatarClick}
               style={{ cursor: 'pointer' }}
             />
             <div className="chat-header-info">
