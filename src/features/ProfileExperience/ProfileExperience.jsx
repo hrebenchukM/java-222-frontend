@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import AppContext from '../../features/appContext/AppContext';
 import '../ProfileExperience/ProfileExperience.css';
 import AddExperienceModal from '../Modals/AddExperienceModal';
 
@@ -11,8 +12,21 @@ const Briefcase = ({ size }) => (
 );
 
 const ProfileExperience = () => {
-        const [isModalOpen, setIsModalOpen] = useState(false);
-    
+  const { request } = useContext(AppContext);
+
+  const [experiences, setExperiences] = useState([]);
+ 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+   
+
+useEffect(() => {
+  request('api://user/experience')
+    .then(res => {
+      setExperiences(Array.isArray(res.data) ? res.data : []);
+    })
+    .catch(console.error);
+}, []);
+
   return (
     <>
     <div className="experience-card">
@@ -25,16 +39,22 @@ const ProfileExperience = () => {
       <p className="section-description">
         Show everyone your achievements and get twice as many profile and contact information views
       </p>
-      <div className="experience-item">
-        <div className="experience-icon">
-          <Briefcase size={24} />
-        </div>
-        <div className="experience-content">
-          <h3>Position</h3>
-          <p className="experience-org">Organization</p>
-          <p className="experience-date">2012 - now</p>
-        </div>
-      </div>
+   {experiences.map(block => (
+  <div key={block.experience.id} className="experience-item">
+
+    <h3>{block.experience.position}</h3>
+
+    <p className="experience-org">
+      {block.company.name} · {block.experience.employmentType}
+    </p>
+
+    <p className="experience-date">
+      {block.experience.startDate} – {block.experience.endDate ?? 'Now'}
+    </p>
+
+  </div>
+))}
+
       <button className="btn-add" onClick={() => setIsModalOpen(true)}>Add experience</button>
     </div>
        <AddExperienceModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

@@ -49,20 +49,21 @@ export default function App() {
     });
 
   // ===== USER FROM JWT
-  useEffect(() => {
-    if (token) {
-      const payload = Base64.jwtDecodePayload(token);
-      setUser({
-        id: payload.sub,
-        aud: payload.aud,
-        email: payload.email,
-        name: payload.name,
-        dob: payload.dob ?? null,
-      });
-    } else {
-      setUser(null);
-    }
-  }, [token]);
+useEffect(() => {
+  if (typeof token === 'string' && token.split('.').length === 3) {
+    const payload = Base64.jwtDecodePayload(token);
+    setUser({
+      id: payload.sub,
+      aud: payload.aud,
+      email: payload.email,
+      name: payload.name,
+      dob: payload.dob ?? null,
+    });
+  } else {
+    setUser(null);
+  }
+}, [token]);
+
 
   return (
     <AppContext.Provider

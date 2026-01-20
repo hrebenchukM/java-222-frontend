@@ -1,6 +1,8 @@
 import React from 'react';
 import { Eye, Plus } from 'lucide-react';
 import '../ProfileAnalytics/ProfileAnalytics.css';
+import { useEffect, useState, useContext } from 'react';
+import AppContext from '../../features/appContext/AppContext';
 
 const Users = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -19,6 +21,19 @@ const Briefcase = ({ size }) => (
 );
 
 const ProfileAnalytics = () => {
+  const { request } = useContext(AppContext);
+
+  const [analytics, setAnalytics] = useState({
+    profileViews: 0,
+    postViews: 0,
+  });
+  useEffect(() => {
+    request('api://user/analytics')
+      .then(data => setAnalytics(data))
+      .catch(console.error);
+  }, []);
+
+
   return (
     <div className="analytics-card">
       <div className="analytics-header">
@@ -34,7 +49,7 @@ const ProfileAnalytics = () => {
             <Users size={20} />
           </div>
           <div className="stat-content">
-            <p className="stat-number">73 profile views</p>
+            <p className="stat-number"> {analytics.profileViews} profile views</p>
             <p className="stat-description">To attract viewers, update your profile</p>
           </div>
         </div>
@@ -43,7 +58,7 @@ const ProfileAnalytics = () => {
             <Briefcase size={20} />
           </div>
           <div className="stat-content">
-            <p className="stat-number">128 post views</p>
+            <p className="stat-number"> {analytics.postViews} post views</p>
             <p className="stat-description">To attract more followers, start a post</p>
           </div>
         </div>

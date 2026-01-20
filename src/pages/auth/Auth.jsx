@@ -44,18 +44,31 @@ const AuthPage = () => {
     const credentials = Base64.encode(
       `${formData.login}:${formData.password}`
     );
+  
+fetch('http://localhost:8080/JavaWeb222/user', {
+  method: 'GET',
+  headers: {
+    Authorization: 'Basic ' + credentials
+  }
+})
+.then(r => {
+  if (!r.ok) throw new Error();
+  return r.json();          // ❗ обязательно
+})
 
-    request('api://user', {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic ' + credentials
-      }
-    })
-      .then((jwt) => {
-        setToken(jwt);
-        navigate('/app');
-      })
-      .catch(() => alert('Invalid login or password'));
+.then(j => {
+  console.log('JWT from server:', j.data);
+
+  // ❗ ПРОВЕРКА: это реально JWT?
+  if (typeof j.data === 'string' && j.data.split('.').length === 3) {
+    setToken(j.data);
+    navigate('/app');
+  } else {
+    alert(j.data);   // покажет "Credentials rejected..."
+  }
+});
+
+
   };
   return (
     <div className="auth-page">
