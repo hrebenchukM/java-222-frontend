@@ -25,28 +25,44 @@ import ChatMain from '../features/ChatMain/ChatMain';
 
 export default function App() {
   const [token, setToken] = useState(null);
+const [tokenReady, setTokenReady] = useState(false);
+
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState({ cartItems: [] });
 
-  // ===== REQUEST (как у препода)
   const request = (url, conf = {}, isFull = false) =>
-    new Promise((resolve, reject) => {
-      const backUrl = 'http://localhost:8080/JavaWeb222/';
-      url = url.replace('api://', backUrl);
+  new Promise((resolve, reject) => {
 
-      if (token) {
-        conf.headers ??= {};
-        conf.headers.Authorization ??= 'Bearer ' + token;
-      }
+    if (!token) {
+      reject("NO_TOKEN");
+      return;
+    }
 
-      fetch(url, conf)
-        .then(r => r.json())
-        .then(j => {
-          if (j.status?.isOk) resolve(isFull ? j : j.data);
-          else reject(j);
-        })
-        .catch(reject);
-    });
+    const backUrl = 'http://localhost:8080/JavaWeb222/';
+    url = url.replace('api://', backUrl);
+
+    conf.headers ??= {};
+    conf.headers.Authorization ??= 'Bearer ' + token;
+
+    fetch(url, conf)
+      .then(r => r.json())
+      .then(j => {
+        if (j.status?.isOk) resolve(isFull ? j : j.data);
+        else reject(j);
+      })
+      .catch(reject);
+  });
+
+
+useEffect(() => {
+  const savedToken = localStorage.getItem('token');
+  if (savedToken) {
+    setToken(savedToken);
+  }
+  setTokenReady(true);
+}, []);
+
+
 
   // ===== USER FROM JWT
 useEffect(() => {
@@ -64,6 +80,9 @@ useEffect(() => {
   }
 }, [token]);
 
+if (!tokenReady) {
+  return null; 
+}
 
   return (
     <AppContext.Provider

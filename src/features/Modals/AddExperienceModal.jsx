@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Modal from '../../app/ui/Modal';
+import AppContext from '../../features/appContext/AppContext';
 
-const AddExperienceModal = ({ isOpen, onClose }) => {
+const AddExperienceModal = ({ isOpen, onClose, onAdded }) => {
+  const { request } = useContext(AppContext);
+
   const [formData, setFormData] = useState({
     title: '',
     company: '',
@@ -14,14 +17,43 @@ const AddExperienceModal = ({ isOpen, onClose }) => {
     description: ''
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Experience added:', formData);
-    onClose();
-  };
 
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const years = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const startDate = `${formData.startYear}-${String(
+      months.indexOf(formData.startMonth) + 1
+    ).padStart(2, '0')}-01`;
+
+    const endDate = formData.current
+      ? null
+      : `${formData.endYear}-${String(
+          months.indexOf(formData.endMonth) + 1
+        ).padStart(2, '0')}-01`;
+
+    request("api://user/experience", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        position: formData.title,
+        companyName: formData.company, // backend resolves company
+        location: formData.location,
+        employmentType: "Full-time",
+        workLocationType: "Office",
+        startDate,
+        endDate,
+        description: formData.description
+      })
+    })
+    .then(() => {
+      onAdded();   // 🔥 КЛЮЧЕВО
+      onClose();
+    })
+    .catch(alert);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Adding work experience">

@@ -9,6 +9,7 @@ import logoImg from '../../shared/assets/illustrations/linkedin_icon.png';
 
 
 const AuthPage = () => {
+  
    const { request, setToken } = useContext(AppContext);
   const navigate = useNavigate();
   const [params] = useSearchParams();
@@ -29,47 +30,38 @@ const AuthPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    if (mode === 'signup') {
-      if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-      alert('Регистрация будет добавлена позже');
+
+  const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (mode === 'signup') {
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
       return;
     }
-
-    const credentials = Base64.encode(
-      `${formData.login}:${formData.password}`
-    );
-  
-fetch('http://localhost:8080/JavaWeb222/user', {
-  method: 'GET',
-  headers: {
-    Authorization: 'Basic ' + credentials
+    alert('Регистрация будет добавлена позже');
+    return;
   }
-})
-.then(r => {
-  if (!r.ok) throw new Error();
-  return r.json();          // ❗ обязательно
-})
 
-.then(j => {
-  console.log('JWT from server:', j.data);
+  const credentials = Base64.encode(
+    `${formData.login}:${formData.password}`
+  );
 
-  // ❗ ПРОВЕРКА: это реально JWT?
-  if (typeof j.data === 'string' && j.data.split('.').length === 3) {
-    setToken(j.data);
-    navigate('/app');
-  } else {
-    alert(j.data);   // покажет "Credentials rejected..."
-  }
-});
+  request("api://user", {
+    method: "GET",
+    headers: {
+      Authorization: "Basic " + credentials,
+    }
+  })
+  .then(jwt => {
+    setToken(jwt);
+    localStorage.setItem("token", jwt);
+    navigate("/app");
+  })
+  .catch(() => alert("У вході відмовлено"));
+};
 
-
-  };
   return (
     <div className="auth-page">
 

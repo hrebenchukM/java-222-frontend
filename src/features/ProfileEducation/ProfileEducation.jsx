@@ -1,45 +1,109 @@
-import React, { useState } from 'react';
-import { Plus, Edit } from 'lucide-react';
+import { useState } from 'react';
+import { Plus, Edit, Briefcase } from 'lucide-react';
 import '../ProfileEducation/ProfileEducation.css';
 import AddEducationModal from '../Modals/AddEducationModal';
 import AddCertificateModal from '../Modals/AddCertificateModal';
+import { fileUrl } from '../../shared/api/files';
 
-const ProfileEducation = () => {
-      const [isModalOpen, setIsModalOpen] = useState(false);
+const ProfileEducation = ({ items = [], reload }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
+
+  const hasEducation = items.length > 0;
+
   return (
-      <>
-    <div className="education-card">
-      <div className="section-header">
-        <h2>Education</h2>
-        <div className="section-actions">
-            <button className="icon-button" onClick={() => setIsModalOpen(true)}>
+    <>
+      <div className="education-card">
+
+        {/* ===== HEADER ===== */}
+        <div className="section-header">
+          <h2>Education</h2>
+          <div className="section-actions">
+            <button
+              className="icon-button"
+              onClick={() => setIsModalOpen(true)}
+            >
               <Plus size={18} />
             </button>
-          <button className="icon-button">
-            <Edit size={18} />
+            <button className="icon-button">
+              <Edit size={18} />
+            </button>
+          </div>
+        </div>
+
+        {/* ===== EMPTY STATE ===== */}
+        {!hasEducation && (
+          <div className="education-empty">
+            No education added
+          </div>
+        )}
+
+        {/* ===== LIST ===== */}
+        {items.map(block => {
+          if (!block.education) return null;
+
+          return (
+            <div
+              key={block.education.id}
+              className="education-item"
+            >
+
+              <div className="education-logo">
+                {block.academy?.logoUrl
+                  ? (
+                    <img
+                      src={fileUrl(block.academy.logoUrl)}
+                      alt={block.academy?.name}
+                      className="university-img"
+                    />
+                  )
+                  : <Briefcase size={24} />
+                }
+              </div>
+
+              <div className="education-content">
+                <h3>{block.education.institution}</h3>
+
+                <p>
+                  {block.education.degree}
+                  {block.education.fieldOfStudy &&
+                    ` · ${block.education.fieldOfStudy}`}
+                </p>
+
+                <p className="education-date">
+                  {block.education.startDate}
+                  {' – '}
+                  {block.education.endDate ?? 'Now'}
+                </p>
+              </div>
+
+            </div>
+          );
+        })}
+
+        {/* ===== ACTIONS ===== */}
+        <div className="education-actions">
+          <button
+            className="btn-add"
+            onClick={() => setIsCertificateModalOpen(true)}
+          >
+            Add certificate
           </button>
         </div>
+
       </div>
-      <div className="education-item">
-        <div className="education-logo">
-          <img
-            src="https://images.pexels.com/photos/256490/pexels-photo-256490.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&dpr=1"
-            alt="UCLA"
-            className="university-img"
-          />
-        </div>
-        <div className="education-content">
-          <h3>University of California, Los Angeles (UCLA)</h3>
-          <p className="education-date">2014-2018</p>
-        </div>
-      </div>
-        <div className="education-actions">
-            <button className="btn-add" onClick={() => setIsCertificateModalOpen(true)}>Add certificate</button>    
-        </div>
-    </div>
-         <AddCertificateModal isOpen={isCertificateModalOpen} onClose={() => setIsCertificateModalOpen(false)} />
-        <AddEducationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      {/* ===== MODALS ===== */}
+      <AddEducationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdded={reload}
+      />
+
+      <AddCertificateModal
+        isOpen={isCertificateModalOpen}
+        onClose={() => setIsCertificateModalOpen(false)}
+      />
     </>
   );
 };
