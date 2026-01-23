@@ -6,16 +6,54 @@ import ProfileHeader from '../../features/ProfileHeader/ProfileHeader';
 import ProfileAnalytics from '../../features/ProfileAnalytics/ProfileAnalytics';
 import ProfileExperience from '../../features/ProfileExperience/ProfileExperience';
 import ProfileEducation from '../../features/ProfileEducation/ProfileEducation';
+import ProfileSkills from "../../features/ProfileSkills/ProfileSkills";
 
 const initialState = {
   profile: null,
   analytics: null,
   experience: [],
-  education: []
+  education: [],
+  certificates: [],
+  skills: []              
 };
 
+
 const ProfilePage = () => {
-  const { request, token } = useContext(AppContext);
+  
+  const reloadExperience = async () => {
+  const experience = await request("api://user/experience");
+  setData(prev => ({
+    ...prev,
+    experience: Array.isArray(experience) ? experience : []
+  }));
+};
+
+const reloadEducation = async () => {
+  const education = await request("api://user/education");
+  setData(prev => ({
+    ...prev,
+    education: Array.isArray(education) ? education : []
+  }));
+};
+
+const reloadCertificates = async () => {
+  const certificates = await request("api://user/certificates");
+  setData(prev => ({
+    ...prev,
+    certificates: Array.isArray(certificates) ? certificates : []
+  }));
+};
+
+const reloadSkills = async () => {
+  const skills = await request("api://user/skills");
+  setData(prev => ({
+    ...prev,
+    skills: Array.isArray(skills) ? skills : []
+  }));
+};
+
+ const { request, token } = useContext(AppContext);
+
   const [data, setData] = useState(initialState);
   const [loading, setLoading] = useState(true);
 useEffect(() => {
@@ -62,6 +100,26 @@ useEffect(() => {
         education: Array.isArray(education) ? education : []
       }));
 
+      // 5️⃣ CERTIFICATES
+      const certificates = await request("api://user/certificates");
+      if (cancelled) return;
+
+      setData(prev => ({
+        ...prev,
+        certificates: Array.isArray(certificates) ? certificates : []
+      }));
+
+      // 6️⃣ SKILLS
+      const skills = await request("api://user/skills");
+      console.log("SKILLS FROM API:", skills);
+      if (cancelled) return;
+
+      setData(prev => ({
+        ...prev,
+        skills: Array.isArray(skills) ? skills : []
+      }));
+
+
     } catch (err) {
       console.error("Profile load error:", err);
     } finally {
@@ -96,9 +154,22 @@ useEffect(() => {
 
             <ProfileAnalytics analytics={data.analytics} />
 
-            <ProfileExperience items={data.experience} />
+   <ProfileExperience
+  items={data.experience}
+  onAdded={reloadExperience}
+/>
 
-            <ProfileEducation items={data.education} />
+<ProfileEducation
+  education={data.education}
+  certificates={data.certificates}
+  onEducationAdded={reloadEducation}
+  onCertificateAdded={reloadCertificates}
+/>
+
+<ProfileSkills
+  skills={data.skills}
+  onAdded={reloadSkills}
+/>
 
           </div>
         </div>

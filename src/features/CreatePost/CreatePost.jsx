@@ -1,23 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext} from 'react';
 import { Image, Video, Calendar } from 'lucide-react';
 import '../CreatePost/CreatePost.css';
 import CreatePostModal from '../Modals/CreatePostModal';
+import AppContext from '../../features/appContext/AppContext';
+import { fileUrl } from '../../shared/api/files';
 
-const CreatePost = () => {
-     const user = {
-    name: 'Ann Penny',
-    avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1'
-  };
-      const [isModalOpen, setIsModalOpen] = useState(false);
+const CreatePost = ({ onPostCreated }) => {
+  const { user, profile } = useContext(AppContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (!user || !profile?.user) return null;
+
+  const u = profile.user;
+
+const modalUser = {
+  name: `${u.firstName} ${u.secondName}`.trim(),
+  avatar: u.avatarUrl ? fileUrl(u.avatarUrl) : null
+};
   return (
     <>
     <div className="create-post">
       <div className="create-post-input">
-        <img
-          src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1"
-          alt="Profile"
-          className="create-post-avatar"
-        />
+<img
+  src={u?.avatarUrl
+    ? `${fileUrl(u.avatarUrl)}`
+    : 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'
+  }
+  alt="Profile"
+  className="create-post-avatar"
+/>
+
         <input
             type="text"
             placeholder="Start your post"
@@ -42,7 +54,13 @@ const CreatePost = () => {
         </button>
       </div>
     </div>
-         <CreatePostModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} user={user} />
+        <CreatePostModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onPostCreated={onPostCreated}
+  user={modalUser}
+/>
+
     </>
   );
 };

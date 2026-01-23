@@ -53,7 +53,7 @@ const AddEducationModal = ({ isOpen, onClose, onAdded }) => {
       })
     })
     .then(() => {
-      onAdded?.();   // 🔥 как в experience
+      onAdded?.();   
       onClose();
     })
     .catch(alert);

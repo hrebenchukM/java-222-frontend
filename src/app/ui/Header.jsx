@@ -2,6 +2,7 @@ import React, { useContext, useMemo } from 'react';
 import { Home, Users, Briefcase, MessageCircle, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AppContext from '../../features/appContext/AppContext';
+import { fileUrl } from '../../shared/api/files';
 
 import './Header.css';
 import logoImg from '../../shared/assets/illustrations/linkedin_icon.png';
@@ -10,7 +11,7 @@ import logoImg from '../../shared/assets/illustrations/linkedin_icon.png';
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cart, user, setToken } = useContext(AppContext);
+const { cart, user, profile, setToken } = useContext(AppContext);
 
   const isActive = (path) => location.pathname === path;
 
@@ -112,10 +113,16 @@ const Header = () => {
                     title={profileTitle}
                     onClick={() => navigate('/app/profile')}
                   >
-                    <img
-                      src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg"
-                      className="nav-profile-img"
-                    />
+                <img
+                  src={
+                    profile?.user?.avatarUrl
+                      ? fileUrl(profile?.user?.avatarUrl)
+                      : '/img/avatar-placeholder.png'
+                  }
+                  alt="Profile"
+                  className="nav-profile-img"
+                />
+
                     <span>My profile</span>
                   </button>
 {/* 

@@ -49,7 +49,7 @@ const AddExperienceModal = ({ isOpen, onClose, onAdded }) => {
       })
     })
     .then(() => {
-      onAdded();   // 🔥 КЛЮЧЕВО
+      onAdded();   
       onClose();
     })
     .catch(alert);

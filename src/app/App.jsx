@@ -24,69 +24,107 @@ import CompanyPage from '../pages/company/CompanyPage';
 import ChatMain from '../features/ChatMain/ChatMain';
 
 export default function App() {
-  const [token, setToken] = useState(null);
-const [tokenReady, setTokenReady] = useState(false);
 
-  const [user, setUser] = useState(null);
+  // ================= STATE =================
+  const [token, setToken] = useState(null);
+  const [tokenReady, setTokenReady] = useState(false);
+
+  const [user, setUser] = useState(null);        // из JWT
+  const [profile, setProfile] = useState(null);  // из БД
+
   const [cart, setCart] = useState({ cartItems: [] });
 
+  // ================= REQUEST =================
   const request = (url, conf = {}, isFull = false) =>
-  new Promise((resolve, reject) => {
+    new Promise((resolve, reject) => {
 
-    if (!token) {
-      reject("NO_TOKEN");
-      return;
-    }
+      if (!token) {
+        reject("NO_TOKEN");
+        return;
+      }
 
-    const backUrl = 'http://localhost:8080/JavaWeb222/';
-    url = url.replace('api://', backUrl);
+      const backUrl = 'http://localhost:8080/JavaWeb222/';
+      url = url.replace('api://', backUrl);
 
-    conf.headers ??= {};
-    conf.headers.Authorization ??= 'Bearer ' + token;
+      conf.headers ??= {};
+      conf.headers.Authorization ??= 'Bearer ' + token;
 
-    fetch(url, conf)
-      .then(r => r.json())
-      .then(j => {
-        if (j.status?.isOk) resolve(isFull ? j : j.data);
-        else reject(j);
-      })
-      .catch(reject);
-  });
-
-
-useEffect(() => {
-  const savedToken = localStorage.getItem('token');
-  if (savedToken) {
-    setToken(savedToken);
-  }
-  setTokenReady(true);
-}, []);
-
-
-
-  // ===== USER FROM JWT
-useEffect(() => {
-  if (typeof token === 'string' && token.split('.').length === 3) {
-    const payload = Base64.jwtDecodePayload(token);
-    setUser({
-      id: payload.sub,
-      aud: payload.aud,
-      email: payload.email,
-      name: payload.name,
-      dob: payload.dob ?? null,
+      fetch(url, conf)
+        .then(r => r.json())
+        .then(j => {
+          if (j.status?.isOk) resolve(isFull ? j : j.data);
+          else reject(j);
+        })
+        .catch(reject);
     });
-  } else {
-    setUser(null);
+
+  // ================= TOKEN RESTORE =================
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      setToken(savedToken);
+    }
+    setTokenReady(true);
+  }, []);
+
+  // ================= USER FROM JWT =================
+  useEffect(() => {
+    if (typeof token === 'string' && token.split('.').length === 3) {
+      const payload = Base64.jwtDecodePayload(token);
+      setUser({
+        id: payload.sub,
+        aud: payload.aud,
+        email: payload.email,
+        name: payload.name,
+        dob: payload.dob ?? null,
+      });
+    } else {
+      setUser(null);
+      setProfile(null);
+    }
+  }, [token]);
+
+  // ================= PROFILE BOOTSTRAP =================
+  useEffect(() => {
+    if (!token) return;
+
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const profile = await request("api://user/profile");
+        if (!cancelled) {
+          setProfile(profile);
+        }
+      } catch (err) {
+        console.error("Profile bootstrap error:", err);
+        if (!cancelled) setProfile(null);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [token]);
+
+  // ================= GUARD =================
+  if (!tokenReady) {
+    return null; // splash / loader
   }
-}, [token]);
 
-if (!tokenReady) {
-  return null; 
-}
-
+  // ================= RENDER =================
   return (
     <AppContext.Provider
-      value={{ token, setToken, user, cart, setCart, request }}
+      value={{
+        token,
+        setToken,
+        user,
+        profile,
+        setProfile,
+        cart,
+        setCart,
+        request
+      }}
     >
       <BrowserRouter>
         <Routes>
@@ -106,11 +144,10 @@ if (!tokenReady) {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="network" element={<NetworkPage />} />
             <Route path="vacancies" element={<VacanciesPage />} />
-            {/* <Route path="messages" element={<MessagesPage />} /> */}
+
             <Route path="messages" element={<MessagesPage />}>
               <Route path=":chatId" element={<ChatMain />} />
             </Route>
-
 
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="profile/:username" element={<ProfilePage />} />
@@ -118,7 +155,6 @@ if (!tokenReady) {
             <Route path="group/:id" element={<GroupPage />} />
             <Route path="event/:id" element={<EventPage />} />
             <Route path="company/:id" element={<CompanyPage />} />
-                
           </Route>
 
           {/* FALLBACK */}

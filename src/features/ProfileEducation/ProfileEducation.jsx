@@ -5,17 +5,25 @@ import AddEducationModal from '../Modals/AddEducationModal';
 import AddCertificateModal from '../Modals/AddCertificateModal';
 import { fileUrl } from '../../shared/api/files';
 
-const ProfileEducation = ({ items = [], reload }) => {
+const ProfileEducation = ({
+  education = [],
+  certificates = [],
+  onAdded
+}) => {
+
+  console.log("EDUCATION PROP:", education);
+console.log("CERTIFICATES PROP:", certificates);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
 
-  const hasEducation = items.length > 0;
+  const hasEducation = education.length > 0;
 
   return (
     <>
       <div className="education-card">
 
-        {/* ===== HEADER ===== */}
+        {/* ===== EDUCATION HEADER ===== */}
         <div className="section-header">
           <h2>Education</h2>
           <div className="section-actions">
@@ -31,15 +39,15 @@ const ProfileEducation = ({ items = [], reload }) => {
           </div>
         </div>
 
-        {/* ===== EMPTY STATE ===== */}
+        {/* ===== EDUCATION EMPTY ===== */}
         {!hasEducation && (
           <div className="education-empty">
             No education added
           </div>
         )}
 
-        {/* ===== LIST ===== */}
-        {items.map(block => {
+        {/* ===== EDUCATION LIST ===== */}
+        {education.map(block => {
           if (!block.education) return null;
 
           return (
@@ -47,18 +55,16 @@ const ProfileEducation = ({ items = [], reload }) => {
               key={block.education.id}
               className="education-item"
             >
-
               <div className="education-logo">
-                {block.academy?.logoUrl
-                  ? (
-                    <img
-                      src={fileUrl(block.academy.logoUrl)}
-                      alt={block.academy?.name}
-                      className="university-img"
-                    />
-                  )
-                  : <Briefcase size={24} />
-                }
+                {block.academy?.logoUrl ? (
+                  <img
+                    src={fileUrl(block.academy.logoUrl)}
+                    alt={block.academy?.name}
+                    className="university-img"
+                  />
+                ) : (
+                  <Briefcase size={24} />
+                )}
               </div>
 
               <div className="education-content">
@@ -76,10 +82,61 @@ const ProfileEducation = ({ items = [], reload }) => {
                   {block.education.endDate ?? 'Now'}
                 </p>
               </div>
-
             </div>
           );
         })}
+
+        {/* ===== CERTIFICATES ===== */}
+        {certificates.map(block => {
+        const { certificate, academy } = block;
+
+        if (!certificate) return null;
+
+        return (
+          <div
+            key={certificate.id}
+            className="education-item certificate-item"
+          >
+            <div className="education-logo">
+              {academy?.logoUrl ? (
+                <img
+                  src={fileUrl(academy.logoUrl)}
+                  alt={academy?.name}
+                  className="university-img"
+                />
+              ) : (
+                <Briefcase size={24} />
+              )}
+            </div>
+
+            <div className="education-content">
+              <h3>{certificate.name}</h3>
+
+              <p className="certificate-org">
+                {academy?.name}
+              </p>
+
+              <p className="education-date">
+                Issued {certificate.issueDate}
+                {certificate.expiryDate &&
+                  ` · Expired ${certificate.expiryDate}`}
+              </p>
+            </div>
+
+            {certificate.downloadRef && (
+              <a
+                href={fileUrl(certificate.downloadRef)}
+                target="_blank"
+                rel="noreferrer"
+                className="certificate-btn"
+              >
+                Certificate
+              </a>
+            )}
+          </div>
+        );
+      })}
+
 
         {/* ===== ACTIONS ===== */}
         <div className="education-actions">
@@ -94,16 +151,24 @@ const ProfileEducation = ({ items = [], reload }) => {
       </div>
 
       {/* ===== MODALS ===== */}
-      <AddEducationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdded={reload}
-      />
+<AddEducationModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onAdded={() => {
+    onAdded?.();
+    setIsModalOpen(false);
+  }}
+/>
 
-      <AddCertificateModal
-        isOpen={isCertificateModalOpen}
-        onClose={() => setIsCertificateModalOpen(false)}
-      />
+<AddCertificateModal
+  isOpen={isCertificateModalOpen}
+  onClose={() => setIsCertificateModalOpen(false)}
+  onAdded={() => {
+    onAdded?.();
+    setIsCertificateModalOpen(false);
+  }}
+/>
+
     </>
   );
 };

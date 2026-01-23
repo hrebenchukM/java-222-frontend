@@ -1,26 +1,59 @@
 import React, { useState } from 'react';
 import { Image, Calendar, Star } from 'lucide-react';
 import Modal from '../../app/ui/Modal';
+import { useContext } from 'react';
+import AppContext from '../../features/appContext/AppContext';
 
-const CreatePostModal = ({ isOpen, onClose, user }) => {
+
+const CreatePostModal = ({ isOpen, onClose, user, onPostCreated }) => {
+
   const [content, setContent] = useState('');
+const { request } = useContext(AppContext);
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Post created:', content);
+  try {
+      await request(
+        'api://post',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            content
+          })
+        },
+        true
+      );
     onClose();
     setContent('');
-  };
+    onPostCreated?.();
+  }
+  catch (err) {
+    alert(err?.data || 'Failed to create post');
+  }
+};
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Create a post">
       <form onSubmit={handleSubmit}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-          <img
-            src={user?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}
-            alt={user?.name}
-            style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }}
-          />
+        <img
+          src={
+            user?.avatar ||
+            'https://api.dicebear.com/7.x/avataaars/svg?seed=default'
+          }
+          alt={user?.name}
+          style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            objectFit: 'cover'
+          }}
+        />
+
           <span style={{ fontWeight: 600, fontSize: '16px' }}>{user?.name}</span>
         </div>
 

@@ -69,3 +69,33 @@
   display: flex;
   gap: 12px;
 }
+.section-divider {
+  margin: 24px 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Certificates */
+.certificate-item {
+  align-items: center;
+}
+
+.certificate-org {
+  font-size: 14px;
+  color: #374151;
+  margin: 0 0 4px 0;
+}
+
+.certificate-btn {
+  margin-left: auto;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #6366f1;
+  color: #6366f1;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.certificate-btn:hover {
+  background: #eef2ff;
+}

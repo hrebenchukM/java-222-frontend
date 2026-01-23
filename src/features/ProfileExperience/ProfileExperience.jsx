@@ -18,7 +18,7 @@ const Briefcase = ({ size }) => (
   </svg>
 );
 
-const ProfileExperience = ({ items = [] }) => {
+const ProfileExperience = ({ items = [], onAdded }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const hasExperiences = items.length > 0;
 
@@ -77,11 +77,15 @@ const ProfileExperience = ({ items = [] }) => {
         </button>
       </div>
 
-      <AddExperienceModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdded={() => window.location.reload()}
-      />
+<AddExperienceModal
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onAdded={() => {
+    onAdded?.();         
+    setIsModalOpen(false);
+  }}
+/>
+
     </>
   );
 };
