@@ -4,11 +4,12 @@ import './GroupPage.css';
 import PostCard from '../../features/PostCard/PostCard';
 import SimpleProfileCard from '../../features/SimpleProfileCard/SimpleProfileCard';
 import MessagesPanel from '../../features/MessagesPanel/MessagesPanel';
+import { useParams } from 'react-router-dom';
 
-const GroupPage = ({ onNavigate, groupId }) => {
+const GroupPage = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('posts');
   const [postContent, setPostContent] = useState('');
-
+  const { id: groupId } = useParams();
   const group = {
     id: 1,
     name: 'UI/UX Design Professionals',
@@ -26,23 +27,20 @@ const GroupPage = ({ onNavigate, groupId }) => {
     ]
   };
 
-  const posts = [
-    {
-      author: 'Sarah Mitchell',
-      title: 'Senior Product Designer',
-      timeAgo: '3h ago',
-      content: 'Just finished redesigning our mobile app onboarding flow. Reduced drop-off by 40%! Happy to share some insights.',
-      image: 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=800&h=500&dpr=1',
-      likes: 124
+const posts = [
+  {
+    user: {
+      firstName: 'Sarah',
+      secondName: 'Mitchell',
+      avatarUrl: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg'
     },
-    {
-      author: 'James Wilson',
-      title: 'UX Lead',
-      timeAgo: '5h ago',
-      content: 'What are your thoughts on the latest Material Design 3 updates? The color system looks promising.',
-      likes: 87
-    }
-  ];
+    profileTitle: 'Senior Product Designer',
+    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    content: 'Just finished redesigning our mobile app onboarding flow. Reduced drop-off by 40%! Happy to share some insights.',
+    imageUrl: 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg',
+    likesCount: 124
+  }
+];
 
   const members = [
     {
@@ -179,7 +177,8 @@ const GroupPage = ({ onNavigate, groupId }) => {
 
                     <div className="group-posts-list">
                       {posts.map((post, index) => (
-                        <PostCard key={index} {...post} onNavigate={onNavigate} />
+                     <PostCard key={index} post={post} onNavigate={onNavigate} />
+
                       ))}
                     </div>
                   </div>
