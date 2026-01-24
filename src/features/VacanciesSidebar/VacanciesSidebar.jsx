@@ -4,15 +4,12 @@ import '../VacanciesSidebar/VacanciesSidebar.css';
 import PostJobModal from '../Modals/PostJobModal';
 import VacancyFiltersModal from '../Modals/VacancyFiltersModal/VacancyFiltersModal';
 
-const VacanciesSidebar = () => {
+const VacanciesSidebar = ({ onApplyFilters, onPosted }) => {
   const [isPostJobModalOpen, setIsPostJobModalOpen] = useState(false);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
   const [activeView, setActiveView] = useState('parameters');
 
-  const handleApplyFilters = (filters) => {
-    console.log('Filters applied:', filters);
-  };
-
+ 
   return (
     <>
       <div className="vacancies-sidebar-container">
@@ -38,12 +35,18 @@ const VacanciesSidebar = () => {
           <span>Post a vacancy</span>
         </button>
       </div>
-      <PostJobModal isOpen={isPostJobModalOpen} onClose={() => setIsPostJobModalOpen(false)} />
-      <VacancyFiltersModal
+  <PostJobModal
+  isOpen={isPostJobModalOpen}
+  onClose={() => setIsPostJobModalOpen(false)}
+  onPosted={onPosted}
+/>
+
+ <VacancyFiltersModal
         isOpen={isFiltersModalOpen}
         onClose={() => setIsFiltersModalOpen(false)}
-        onApplyFilters={handleApplyFilters}
+        onApplyFilters={onApplyFilters}
       />
+
     </>
   );
 };

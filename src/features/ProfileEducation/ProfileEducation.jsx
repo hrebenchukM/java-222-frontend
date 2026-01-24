@@ -8,8 +8,10 @@ import { fileUrl } from '../../shared/api/files';
 const ProfileEducation = ({
   education = [],
   certificates = [],
-  onAdded
+onEducationAdded,
+onCertificateAdded
 }) => {
+
 
   console.log("EDUCATION PROP:", education);
 console.log("CERTIFICATES PROP:", certificates);
@@ -155,19 +157,21 @@ console.log("CERTIFICATES PROP:", certificates);
   isOpen={isModalOpen}
   onClose={() => setIsModalOpen(false)}
   onAdded={() => {
-    onAdded?.();
+    onEducationAdded?.();
     setIsModalOpen(false);
   }}
 />
+
 
 <AddCertificateModal
   isOpen={isCertificateModalOpen}
   onClose={() => setIsCertificateModalOpen(false)}
   onAdded={() => {
-    onAdded?.();
+    onCertificateAdded?.();   
     setIsCertificateModalOpen(false);
   }}
 />
+
 
     </>
   );

@@ -32,7 +32,6 @@ export default function App() {
   const [user, setUser] = useState(null);        // из JWT
   const [profile, setProfile] = useState(null);  // из БД
 
-  const [cart, setCart] = useState({ cartItems: [] });
 
   // ================= REQUEST =================
   const request = (url, conf = {}, isFull = false) =>
@@ -121,8 +120,6 @@ export default function App() {
         user,
         profile,
         setProfile,
-        cart,
-        setCart,
         request
       }}
     >

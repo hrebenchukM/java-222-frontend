@@ -14,30 +14,21 @@ const AddSkillModal = ({ isOpen, onClose, onAdded }) => {
  const handleSubmit = async (e) => {
   e.preventDefault();
 
-  try {
-    console.log("SEND SKILL:", {
-      name: formData.name,
-      level: formData.level,
-      isMain: formData.isMain
-    });
+  const form = new FormData();
+  form.append("name", formData.name.trim());
+  form.append("level", formData.level);
+  form.append("isMain", formData.isMain);
 
+  try {
     await request("api://user/skills", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        name: formData.name.trim(),
-        level: formData.level || null,
-        isMain: formData.isMain
-      })
+      body: form  
     });
 
-    onAdded?.();  
+    onAdded?.();
     onClose();
   }
   catch (err) {
-    console.error("ADD SKILL ERROR:", err);
     alert(err?.data || "Unexpected error");
   }
 };

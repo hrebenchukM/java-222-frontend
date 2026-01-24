@@ -23,41 +23,44 @@ const AddEducationModal = ({ isOpen, onClose, onAdded }) => {
   ];
   const years = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const startDate =
-      formData.startYear && formData.startMonth
-        ? `${formData.startYear}-${String(
-            months.indexOf(formData.startMonth) + 1
-          ).padStart(2, '0')}-01`
-        : null;
+  const startDate =
+    formData.startYear && formData.startMonth
+      ? `${formData.startYear}-${String(
+          months.indexOf(formData.startMonth) + 1
+        ).padStart(2, '0')}-01`
+      : null;
 
-    const endDate =
-      formData.current || !formData.endYear || !formData.endMonth
-        ? null
-        : `${formData.endYear}-${String(
-            months.indexOf(formData.endMonth) + 1
-          ).padStart(2, '0')}-01`;
+  const endDate =
+    formData.current || !formData.endYear || !formData.endMonth
+      ? null
+      : `${formData.endYear}-${String(
+          months.indexOf(formData.endMonth) + 1
+        ).padStart(2, '0')}-01`;
 
-    request("api://user/education", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        institution: formData.school,
-        degree: formData.degree || null,
-        fieldOfStudy: formData.field || null,
-        startDate,
-        endDate,
-        source: "ui"
-      })
-    })
-    .then(() => {
-      onAdded?.();   
-      onClose();
-    })
-    .catch(alert);
-  };
+  const fd = new FormData();
+
+  fd.append("institution", formData.school);
+  if (formData.degree) fd.append("degree", formData.degree);
+  if (formData.field) fd.append("fieldOfStudy", formData.field);
+
+  if (startDate) fd.append("startDate", startDate);
+  if (endDate) fd.append("endDate", endDate);
+
+  request("api://user/education", {
+    method: "POST",
+    body: fd
+  })
+  .then(() => {
+    onAdded?.();
+    onClose();
+  })
+  .catch(alert);
+};
+
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Adding education">

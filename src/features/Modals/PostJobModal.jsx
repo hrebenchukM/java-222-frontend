@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import Modal from '../../app/ui/Modal';
+import AppContext from '../../features/appContext/AppContext';
+import { useContext } from 'react';
+const PostJobModal = ({ isOpen, onClose, onPosted }) => {
+  const { request } = useContext(AppContext);
 
-const PostJobModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     title: '',
     company: '',
@@ -11,10 +14,33 @@ const PostJobModal = ({ isOpen, onClose }) => {
     description: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Job posted:', formData);
-    onClose();
+
+    const fd = new FormData();
+    fd.append('title', formData.title);
+    fd.append('company', formData.company);
+    fd.append('workplaceType', formData.workplaceType);
+    fd.append('jobType', formData.jobType);
+    fd.append('location', formData.location);
+    fd.append('description', formData.description);
+
+    try {
+    await request(
+  'api://vacancy',
+  {
+    method: 'POST',
+    body: fd
+  }
+);
+
+
+      onPosted?.();   
+      onClose();
+    }
+    catch (e) {
+      alert(e?.data || 'Failed to post vacancy');
+    }
   };
 
   return (

@@ -21,39 +21,50 @@ const AddExperienceModal = ({ isOpen, onClose, onAdded }) => {
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const years = Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    const startDate = `${formData.startYear}-${String(
-      months.indexOf(formData.startMonth) + 1
-    ).padStart(2, '0')}-01`;
+  const fd = new FormData();
 
-    const endDate = formData.current
-      ? null
-      : `${formData.endYear}-${String(
-          months.indexOf(formData.endMonth) + 1
-        ).padStart(2, '0')}-01`;
+  fd.append("position", formData.title);
+  fd.append("companyName", formData.company);
+  fd.append("location", formData.location);
+  fd.append("employmentType", "Full-time");
+  fd.append("workLocationType", "Office");
+  fd.append("description", formData.description);
 
-    request("api://user/experience", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        position: formData.title,
-        companyName: formData.company, // backend resolves company
-        location: formData.location,
-        employmentType: "Full-time",
-        workLocationType: "Office",
-        startDate,
-        endDate,
-        description: formData.description
-      })
-    })
-    .then(() => {
-      onAdded();   
-      onClose();
-    })
-    .catch(alert);
-  };
+  if (formData.startMonth && formData.startYear) {
+    fd.append(
+      "startDate",
+      `${formData.startYear}-${String(months.indexOf(formData.startMonth) + 1).padStart(2, "0")}-01`
+    );
+  }
+
+  if (!formData.current && formData.endMonth && formData.endYear) {
+    fd.append(
+      "endDate",
+      `${formData.endYear}-${String(months.indexOf(formData.endMonth) + 1).padStart(2, "0")}-01`
+    );
+  }
+
+  request("api://user/experience", {
+    method: "POST",
+    body: fd
+  })
+  .then(() => {
+    onAdded?.();
+    onClose();
+  })
+  .catch(err => {
+  console.error(err);
+  alert(
+    typeof err === "string"
+      ? err
+      : err?.data || "Operation failed"
+  );
+});
+
+};
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Adding work experience">
