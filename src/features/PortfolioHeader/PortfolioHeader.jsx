@@ -1,30 +1,76 @@
 import React from 'react';
 import { ExternalLink, MoreHorizontal } from 'lucide-react';
 import '../PortfolioHeader/PortfolioHeader.css';
+import { fileUrl } from '../../shared/api/files';
 
-const PortfolioHeader = () => {
+const PortfolioHeader = ({ user }) => {
+  if (!user) return null;
+
   return (
     <div className="portfolio-header-card">
-      <div className="portfolio-banner"></div>
+      {/* banner */}
+      <div
+        className="portfolio-banner"
+        style={{
+          backgroundImage: user.headerUrl
+            ? fileUrl(user.headerUrl)
+            : undefined
+        }}
+      />
+
       <div className="portfolio-profile-section">
         <div className="portfolio-top-row">
+          {/* avatar */}
           <img
-            src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1"
+            src={
+              user.avatarUrl
+                ? fileUrl(user.avatarUrl)
+                : 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg'
+            }
             alt="Profile"
             className="portfolio-avatar"
           />
+
           <div className="portfolio-main-info">
             <div className="portfolio-info-row">
               <div className="portfolio-info">
-                <h1 className="portfolio-name">David Janssen</h1>
-                <p className="portfolio-title">Lead UI/UX Designer • CD Project Red</p>
-                <p className="portfolio-location">Moscow, Russia</p>
-                <div className="portfolio-links">
-                  <a href="#" className="portfolio-link">www.webditeexample.com</a>
-                  <ExternalLink size={14} />
-                </div>
-                <p className="portfolio-connections">500+ connections</p>
+                {/* name */}
+                <h1 className="portfolio-name">
+                  {user.firstName} {user.secondName}
+                </h1>
+
+                {/* title / headline */}
+                <p className="portfolio-title">
+                  {user.headline || user.profileTitle}
+                </p>
+
+                {/* location */}
+                <p className="portfolio-location">
+                  {user.location}
+                </p>
+
+                {/* portfolio link */}
+                {user.portfolioUrl && (
+                  <div className="portfolio-links">
+                    <a
+                      href={user.portfolioUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="portfolio-link"
+                    >
+                      {user.portfolioUrl}
+                    </a>
+                    <ExternalLink size={14} />
+                  </div>
+                )}
+
+                {/* connections — пока заглушка */}
+                <p className="portfolio-connections">
+                  500+ connections
+                </p>
               </div>
+
+              {/* right column — оставили как есть */}
               <div className="portfolio-contact-info">
                 <p className="contact-item">Better Community (Adult-Orphan)</p>
                 <p className="contact-item">Grovemade Authentic (UCLA)</p>
@@ -35,6 +81,8 @@ const PortfolioHeader = () => {
             </div>
           </div>
         </div>
+
+        {/* actions */}
         <div className="portfolio-actions">
           <button className="btn-send">Send a Message</button>
           <button className="btn-more-action">More</button>
