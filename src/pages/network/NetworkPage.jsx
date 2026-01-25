@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect, useContext } from 'react';
 
 import './NetworkPage.css';
 import MessagesPanel from '../../features/MessagesPanel/MessagesPanel';
@@ -7,54 +6,36 @@ import NetworkSidebar from '../../features/NetworkSideBar/NetworkSidebar';
 import ConnectionCard from '../../features/ConnectionCard/ConnectionCard';
 import EventPanel from '../../features/EventPanel/EventPanel';
 import ManageNetworkModal from '../../features/Modals/ManageNetworkModal/ManageNetworkModal';
+import AppContext from '../../features/appContext/AppContext';
+import { fileUrl } from '../../shared/api/files';
 
 const NetworkPage = ({ onNavigate }) => {
+  const { request } = useContext(AppContext);
+
   const [activeTab, setActiveTab] = useState('new');
   const [isManageNetworkModalOpen, setIsManageNetworkModalOpen] = useState(false);
   const [networkModalTab, setNetworkModalTab] = useState('contacts');
 
-  const connections = [
-    {
-      name: 'David Jonson',
-      title: 'Lead UI/UX Designer',
-      username: '@JonsonCPDR',
-      avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1'
-    },
-    {
-      name: 'Duncan Callahan',
-      title: 'Lead UI/UX Designer',
-      username: '@Callahandesign',
-      avatar: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1'
-    },
-    {
-      name: 'Joshua Cortez',
-      title: 'UI/UX Designer',
-      username: '@JoshuaCortezUIUX',
-      avatar: 'https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1'
-    },
-    {
-      name: "Jennifer O'Brian",
-      title: 'UI/UX Designer',
-      username: '@JenniferOBrian87',
-      avatar: 'https://images.pexels.com/photos/3785081/pexels-photo-3785081.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1'
-    },
-    {
-      name: 'Emma Knight',
-      title: 'Senior UI/UX Designer',
-      username: '@reallemmaknight',
-      avatar: 'https://images.pexels.com/photos/3785076/pexels-photo-3785076.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1'
-    },
-    {
-      name: 'Michael Kennedy',
-      title: 'Junior UI/UX Designer',
-      username: '@kennedyux',
-      avatar: 'https://images.pexels.com/photos/3785073/pexels-photo-3785073.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1'
-    }
-  ];
+  const [connections, setConnections] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ======================== LOAD SUGGESTIONS ========================
+useEffect(() => {
+  setLoading(true);
+  request('api://network/suggestions')
+    .then(r => {
+      setConnections(Array.isArray(r) ? r : []);
+    })
+    .catch(err => {
+      console.error('NETWORK ERROR:', err);
+      setConnections([]);
+    })
+    .finally(() => setLoading(false));
+}, [request]);
 
   return (
     <>
-     <main className="main-content">
+      <main className="main-content">
         <div className="container">
           <div className="network-grid">
             <aside className="sidebar-left">
@@ -78,7 +59,7 @@ const NetworkPage = ({ onNavigate }) => {
                   className={`network-tab ${activeTab === 'event' ? 'active' : ''}`}
                   onClick={() => setActiveTab('event')}
                 >
-                  Event
+                  Activity
                 </button>
               </div>
 
@@ -87,10 +68,27 @@ const NetworkPage = ({ onNavigate }) => {
                   <h2 className="network-section-title">
                     PEOPLE IN THE "UI/UX DESIGN" YOU MAY KNOW
                   </h2>
+
                   <div className="connections-grid">
-                    {connections.map((connection, index) => (
-                      <ConnectionCard key={index} {...connection} onNavigate={onNavigate} />
-                    ))}
+                    {loading ? (
+                      <div className="network-loading">Loading...</div>
+                    ) : connections.length === 0 ? (
+                      <div className="network-empty">
+                        No suggestions yet
+                      </div>
+                    ) : (
+                    connections.map(u => (
+                    <ConnectionCard
+                      key={u.id}
+                      userId={u.id}
+                      name={`${u.firstName} ${u.secondName}`}
+                      title={u.profileTitle}
+                      avatar={fileUrl(u.avatarUrl)}   // см. пункт 2
+                      onNavigate={onNavigate}
+                    />
+                  ))
+
+                    )}
                   </div>
                 </div>
               ) : (
@@ -99,18 +97,22 @@ const NetworkPage = ({ onNavigate }) => {
             </section>
 
             <aside className="sidebar-right">
-              <MessagesPanel onNavigate={onNavigate} onSelectChat={() => {}} />
+              <MessagesPanel
+                onNavigate={onNavigate}
+                onSelectChat={() => {}}
+              />
             </aside>
           </div>
         </div>
       </main>
+
       <ManageNetworkModal
         isOpen={isManageNetworkModalOpen}
         onClose={() => setIsManageNetworkModalOpen(false)}
         initialTab={networkModalTab}
         onNavigate={onNavigate}
       />
-</>
+    </>
   );
 };
 

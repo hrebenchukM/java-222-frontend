@@ -1,84 +1,85 @@
-import React, { useState } from 'react';
 import { Users, Bell, Settings, MoreHorizontal, Image, Video, FileText, Smile } from 'lucide-react';
 import './GroupPage.css';
 import PostCard from '../../features/PostCard/PostCard';
 import SimpleProfileCard from '../../features/SimpleProfileCard/SimpleProfileCard';
 import MessagesPanel from '../../features/MessagesPanel/MessagesPanel';
 import { useParams } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import AppContext from '../../features/appContext/AppContext';
+import { fileUrl } from '../../shared/api/files';
+
+
+
 
 const GroupPage = ({ onNavigate }) => {
+ // ✅ ВСЕ ХУКИ СНАЧАЛА
   const [activeTab, setActiveTab] = useState('posts');
   const [postContent, setPostContent] = useState('');
   const { id: groupId } = useParams();
-  const group = {
-    id: 1,
-    name: 'UI/UX Design Professionals',
-    category: 'Design',
-    members: '45,280',
-    postsPerWeek: 12,
-    cover: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&dpr=1',
-    avatar: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&dpr=1',
-    description: 'A community for UI/UX designers to share insights, discuss trends, and grow together.',
-    rules: [
-      'Be respectful and professional',
-      'No spam or self-promotion',
-      'Share quality content',
-      'Help others learn and grow'
-    ]
-  };
+  const [group, setGroup] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { request, user, profile } = useContext(AppContext);
+  const [members, setMembers] = useState([]);
+  const [membersLoading, setMembersLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
 
-const posts = [
-  {
-    user: {
-      firstName: 'Sarah',
-      secondName: 'Mitchell',
-      avatarUrl: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg'
-    },
-    profileTitle: 'Senior Product Designer',
-    createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000),
-    content: 'Just finished redesigning our mobile app onboarding flow. Reduced drop-off by 40%! Happy to share some insights.',
-    imageUrl: 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg',
-    likesCount: 124
+  const u = profile?.user;
+
+  // ✅ useEffect — БЕЗ return выше
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    request(`api://groups/${groupId}`)
+      .then(data => !cancelled && setGroup(data))
+      .finally(() => !cancelled && setLoading(false));
+
+    return () => cancelled = true;
+  }, [groupId]);
+
+  useEffect(() => {
+    if (activeTab !== 'members') return;
+    setMembersLoading(true);
+
+    request(`api://groups/${groupId}/members`)
+      .then(setMembers)
+      .finally(() => setMembersLoading(false));
+  }, [activeTab, groupId]);
+
+  useEffect(() => {
+    if (activeTab !== 'posts') return;
+    request(`api://groups/${groupId}/posts`).then(setPosts);
+  }, [activeTab, groupId]);
+
+  // ✅ ТОЛЬКО ТУТ МОЖНО return
+  if (!user || !u) {
+    return <div className="main-content">Loading profile...</div>;
   }
-];
 
-  const members = [
-    {
-      name: 'Sarah Mitchell',
-      title: 'Senior Product Designer',
-      avatar: 'https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
-      role: 'Admin'
-    },
-    {
-      name: 'James Wilson',
-      title: 'UX Lead',
-      avatar: 'https://images.pexels.com/photos/3785077/pexels-photo-3785077.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
-      role: 'Moderator'
-    },
-    {
-      name: 'Emma Thompson',
-      title: 'Design Manager',
-      avatar: 'https://images.pexels.com/photos/3785076/pexels-photo-3785076.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
-      role: 'Member'
-    }
-  ];
+  if (loading) {
+    return <div className="main-content">Loading...</div>;
+  }
 
+  if (!group) {
+    return <div className="main-content">Group not found</div>;
+  }
   return (
+    
       <main className="main-content">
         <div className="container">
           <div className="group-page">
             <div className="group-header">
               <div className="group-cover">
-                <img src={group.cover} alt={group.name} />
+                <img src={group.avatarUrl ? fileUrl(group.avatarUrl) : '/assets/group-cover.jpg'} alt={group.name} />
               </div>
               <div className="group-header-content">
                 <div className="group-header-main">
-                  <img src={group.avatar} alt={group.name} className="group-avatar" />
+                <img src={group.avatarUrl ? fileUrl(group.avatarUrl) : '/assets/group-cover.jpg'} alt={group.name} className="group-avatar" />
                   <div className="group-info">
-                    <h1 className="group-name">{group.name}</h1>
-                    <p className="group-category">{group.category}</p>
+                  <h1 className="group-name">{group.name}</h1>
+                  <p className="group-category">Group</p>
                     <div className="group-stats">
-                      <span>{group.members} members</span>
+                      <span>{group.membersCount} members</span>
                       <span className="stat-separator">•</span>
                       <span>{group.postsPerWeek} posts/week</span>
                     </div>
@@ -140,11 +141,16 @@ const posts = [
                 {activeTab === 'posts' && (
                   <div className="group-posts">
                     <div className="group-create-post">
-                      <img
-                        src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1"
-                        alt="Your avatar"
-                        className="post-avatar"
-                      />
+                     <img
+                      src={
+                        u?.avatarUrl
+                          ? fileUrl(u.avatarUrl)
+                          : 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'
+                      }
+                      alt={`${u.firstName} ${u.secondName}`}
+                      className="post-avatar"
+                    />
+
                       <div className="post-input-container">
                         <textarea
                           placeholder="Share something with the group..."
@@ -175,30 +181,51 @@ const posts = [
                       </div>
                     </div>
 
-                    <div className="group-posts-list">
-                      {posts.map((post, index) => (
-                     <PostCard key={index} post={post} onNavigate={onNavigate} />
+                <div className="group-posts-list">
+                  {posts.map(post => (
+                    <PostCard
+                      key={post.id}
+                      post={post}
+                      onNavigate={onNavigate}
+                    />
+                  ))}
+                </div>
 
-                      ))}
-                    </div>
                   </div>
                 )}
 
-                {activeTab === 'members' && (
-                  <div className="group-members-list">
-                    {members.map((member, index) => (
-                      <div key={index} className="member-item">
-                        <img src={member.avatar} alt={member.name} className="member-avatar" />
-                        <div className="member-info">
-                          <h4>{member.name}</h4>
-                          <p>{member.title}</p>
-                          <span className="member-role">{member.role}</span>
-                        </div>
-                        <button className="btn-secondary">Message</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+            {activeTab === 'members' && (
+  <div className="group-members-list">
+
+    {membersLoading && <div>Loading members...</div>}
+
+    {!membersLoading && members.map((m) => (
+      <div key={m.id} className="member-item">
+
+        <img
+          src={m.user?.avatarUrl ? fileUrl(m.user.avatarUrl) : '/assets/avatar-placeholder.png'}
+          alt={`${m.user?.firstName} ${m.user?.secondName}`}
+          className="member-avatar"
+        />
+
+        <div className="member-info">
+          <h4>
+            {m.user?.firstName} {m.user?.secondName}
+          </h4>
+          <p>{m.user?.profileTitle}</p>
+          <span className="member-role">{m.role}</span>
+        </div>
+
+        <button className="btn-secondary">Message</button>
+      </div>
+    ))}
+
+    {!membersLoading && members.length === 0 && (
+      <div>No members</div>
+    )}
+  </div>
+)}
+
 
                 {activeTab === 'about' && (
                   <div className="group-about-content">
@@ -215,7 +242,7 @@ const posts = [
                         </div>
                         <div className="info-item">
                           <span className="info-label">Members</span>
-                          <span className="info-value">{group.members}</span>
+                          <span className="info-value">{group.membersCount}</span>
                         </div>
                         <div className="info-item">
                           <span className="info-label">Activity</span>
@@ -229,7 +256,6 @@ const posts = [
 
               <aside className="group-sidebar-right">
                 <SimpleProfileCard />
-                <MessagesPanel onNavigate={onNavigate} />
               </aside>
             </div>
           </div>

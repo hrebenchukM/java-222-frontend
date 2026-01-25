@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import AppContext from '../../features/appContext/AppContext';
 import { fileUrl } from '../../shared/api/files';
+import noNotificationsImg from '../../shared/assets/illustrations/no-new-notifications.png';
 
 import './NotificationsPage.css';
 import MessagesPanel from '../../features/MessagesPanel/MessagesPanel';
@@ -194,14 +195,36 @@ const NotificationsPage = ({ onNavigate }) => {
               </div>
             )}
 
-            {!loading && notifications.length === 0 && (
-              <div className="notifications-empty">
-                <h2>No new notifications</h2>
-                <button onClick={() => onNavigate('home')}>
-                  Home page
-                </button>
-              </div>
-            )}
+{!loading && notifications.length === 0 && (
+  <div className="notifications-empty">
+
+  <div className="empty-illustration">
+  <img
+    src={noNotificationsImg}
+    alt="No notifications"
+    className="empty-illustration-img"
+  />
+</div>
+
+
+    <h2 className="empty-title">
+      No new notifications
+    </h2>
+
+    <p className="empty-subtitle">
+      Check out the other updates on the home page
+    </p>
+
+    <button
+      className="home-page-btn"
+      onClick={() => onNavigate('home')}
+    >
+      Home page
+    </button>
+
+  </div>
+)}
+
 
           </section>
 

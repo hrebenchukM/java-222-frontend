@@ -149,7 +149,7 @@ export default function App() {
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="profile/:username" element={<ProfilePage />} />
             <Route path="portfolio/:username" element={<PortfolioPage />} />
-            <Route path="group/:id" element={<GroupPage />} />
+            <Route path="groups/:id" element={<GroupPage />} />
             <Route path="event/:id" element={<EventPage />} />
             <Route path="company/:id" element={<CompanyPage />} />
           </Route>
