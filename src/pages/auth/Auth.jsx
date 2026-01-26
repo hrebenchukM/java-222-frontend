@@ -48,18 +48,23 @@ const AuthPage = () => {
     `${formData.login}:${formData.password}`
   );
 
-  request("api://user", {
-    method: "GET",
-    headers: {
-      Authorization: "Basic " + credentials,
-    }
-  })
-  .then(jwt => {
+  fetch("http://localhost:8080/JavaWeb222/user", {
+  method: "GET",
+  headers: {
+    Authorization: "Basic " + credentials,
+  }
+})
+  .then(r => r.json())
+  .then(j => {
+    if (!j.status?.isOk) throw j;
+
+    const jwt = j.data;
     setToken(jwt);
     localStorage.setItem("token", jwt);
     navigate("/app");
   })
   .catch(() => alert("У вході відмовлено"));
+
 };
 
   return (

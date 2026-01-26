@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from 'react';
+import { LogOut } from 'lucide-react';
 import { Home, Users, Briefcase, MessageCircle, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import AppContext from '../../features/appContext/AppContext';
@@ -11,7 +12,7 @@ import logoImg from '../../shared/assets/illustrations/linkedin_icon.png';
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-const { cart, user, profile, setToken } = useContext(AppContext);
+const { cart, user, profile, setToken,logout  } = useContext(AppContext);
 
   const isActive = (path) => location.pathname === path;
 
@@ -106,6 +107,7 @@ const { cart, user, profile, setToken } = useContext(AppContext);
                 >
                   Login
                 </button>
+                
               ) : (
                 <>
                   <button
@@ -125,22 +127,15 @@ const { cart, user, profile, setToken } = useContext(AppContext);
 
                     <span>My profile</span>
                   </button>
-{/* 
-                  <button
-                    className="nav-item"
-                    title={`Товарів: ${totalItems}\nСума: ₴${cart?.price?.toFixed(2) ?? '0.00'}`}
-                    onClick={() => navigate('/cart')}
-                  >
-                    🛒 {cart?.cartItems?.length || 0}
-                  </button>
+                        <button
+                          onClick={logout}
+                          className="nav-item logout-item"
+                          title="Log out"
+                        >
+                          <LogOut size={20} />
+                          <span>Log out</span>
+                        </button>
 
-                  <button
-                    className="nav-item"
-                    onClick={() => setToken(null)}
-                    title="Logout"
-                  >
-                    ⎋
-                  </button> */}
                 </>
               )}
             </nav>

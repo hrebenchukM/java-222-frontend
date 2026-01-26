@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search, Plus, Filter, MoreVertical } from 'lucide-react';
 import '../ChatSidebar/ChatSidebar.css';
+import { fileUrl } from '../../shared/api/files';
 
 const ChatSidebar = ({ activeTab, setActiveTab, chatUsers, selectedChat, onSelectChat, showChat, onNewMessage, onOpenFilters, onOpenSettings }) => {
   return (
@@ -73,7 +74,7 @@ const ChatSidebar = ({ activeTab, setActiveTab, chatUsers, selectedChat, onSelec
             onClick={() => onSelectChat(user.id)}
           >
             <div className="chat-item-avatar">
-              <img src={user.avatar} alt={user.name} />
+              <img src={fileUrl(user.avatar)} alt={user.name} />
               {user.activeNow && <span className="active-indicator"></span>}
             </div>
             <div className="chat-item-content">

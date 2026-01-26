@@ -25,12 +25,29 @@ import ChatMain from '../features/ChatMain/ChatMain';
 
 export default function App() {
 
+  
   // ================= STATE =================
   const [token, setToken] = useState(null);
   const [tokenReady, setTokenReady] = useState(false);
 
   const [user, setUser] = useState(null);        // из JWT
   const [profile, setProfile] = useState(null);  // из БД
+const logout = () => {
+  // 1️⃣ React state
+  setToken(null);
+  setUser(null);
+  setProfile(null);
+
+  // 2️⃣ localStorage
+  localStorage.removeItem('token');
+
+  // 3️⃣ cookie (ВАЖНО: тот же Path!)
+  document.cookie =
+    'token=; Path=/JavaWeb222; Max-Age=0; SameSite=Lax';
+
+  // 4️⃣ редирект
+  window.location.href = '/landing';
+};
 
 
   // ================= REQUEST =================
@@ -58,13 +75,16 @@ export default function App() {
     });
 
   // ================= TOKEN RESTORE =================
-  useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    if (savedToken) {
-      setToken(savedToken);
-    }
-    setTokenReady(true);
-  }, []);
+useEffect(() => {
+  const savedToken = localStorage.getItem('token');
+  if (savedToken) {
+    setToken(savedToken);
+    document.cookie =
+      `token=${encodeURIComponent(savedToken)}; Path=/JavaWeb222; SameSite=Lax`;
+  }
+  setTokenReady(true);
+}, []);
+
 
   // ================= USER FROM JWT =================
   useEffect(() => {
@@ -121,7 +141,8 @@ export default function App() {
         user,
         profile,
         setProfile,
-        request
+        request,
+        logout
       }}
     >
       <BrowserRouter>
@@ -144,8 +165,9 @@ export default function App() {
             <Route path="vacancies" element={<VacanciesPage />} />
 
             <Route path="messages" element={<MessagesPage />}>
-              <Route path=":chatId" element={<ChatMain />} />
-            </Route>
+              </Route>
+              <Route path="messages/:chatId" element={<MessagesPage />} />
+           
 
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="profile/:username" element={<ProfilePage />} />

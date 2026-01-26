@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Phone, Search, MoreVertical, Smile, Paperclip,Send } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Phone, Search, MoreVertical, Smile, Paperclip, Send } from 'lucide-react';
 import '../ChatMain/ChatMain.css';
+import { fileUrl } from '../../shared/api/files';
 
-const ChatMain = ({ selectedUser, messages, showChat, onBackClick, onAvatarClick }) => {
+const ChatMain = ({
+  selectedUser,
+  messages,
+  showChat,
+  onBackClick,
+  onAvatarClick,
+  currentUserId,
+  onSendMessage
+}) => {
   const [messageText, setMessageText] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,86 +21,67 @@ const ChatMain = ({ selectedUser, messages, showChat, onBackClick, onAvatarClick
   };
 
   const handleSearch = () => {
-    setShowSearch(!showSearch);
-    if (showSearch) {
-      setSearchQuery('');
-    }
+    setShowSearch(prev => !prev);
+    if (showSearch) setSearchQuery('');
   };
 
-  const filteredMessages = searchQuery
-    ? messages.filter(msg => msg.text.toLowerCase().includes(searchQuery.toLowerCase()))
-    : messages;
+  // ================= FILTER =================
+  const visibleMessages = useMemo(() => {
+    const list = Array.isArray(messages) ? messages : [];
+    return searchQuery
+      ? list.filter(m =>
+          m.content?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : list;
+  }, [messages, searchQuery]);
 
-  const handleMoreOptions = () => {
-    alert('More options menu...');
-  };
+  // ================= SEND =================
+  const handleSend = async () => {
+    if (!messageText.trim() || !selectedUser) return;
 
-  const handleEmojiPicker = () => {
-    alert('Emoji picker would open here');
-  };
+    await onSendMessage({
+      chatId: selectedUser.id,
+      content: messageText
+    });
 
-  const handleAttachment = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        alert(`File selected: ${file.name}`);
-      }
-    };
-    input.click();
-  };
-
-  const handleSendMessage = () => {
-    if (messageText.trim()) {
-      alert(`Message sent: ${messageText}`);
-      setMessageText('');
-    }
+    setMessageText('');
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSend();
     }
   };
 
   return (
     <div className={`chat-main ${showChat ? 'show-chat' : ''}`}>
+      {/* HEADER */}
       <div className="chat-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            className="back-button"
-            onClick={onBackClick}
-          >
-            ←
-          </button>
+          <button className="back-button" onClick={onBackClick}>←</button>
+
           <div className="chat-header-user">
             <img
-              src={selectedUser?.avatar}
+              src={fileUrl(selectedUser?.avatar)}
               alt={selectedUser?.name}
               onClick={onAvatarClick}
               style={{ cursor: 'pointer' }}
             />
             <div className="chat-header-info">
               <h2>{selectedUser?.name}</h2>
-              {selectedUser?.activeNow && <span className="status-text">Active Now</span>}
             </div>
           </div>
         </div>
+
         <div className="chat-header-actions">
-          <button className="icon-button" onClick={handleCall}>
-            <Phone size={20} />
-          </button>
-          <button className="icon-button" onClick={handleSearch}>
-            <Search size={20} />
-          </button>
-          <button className="icon-button" onClick={handleMoreOptions}>
-            <MoreVertical size={20} />
-          </button>
+          <button className="icon-button" onClick={handleCall}><Phone size={20} /></button>
+          <button className="icon-button" onClick={handleSearch}><Search size={20} /></button>
+          <button className="icon-button"><MoreVertical size={20} /></button>
         </div>
       </div>
 
+      {/* SEARCH */}
       {showSearch && (
         <div className="chat-search-bar">
           <input
@@ -103,37 +92,34 @@ const ChatMain = ({ selectedUser, messages, showChat, onBackClick, onAvatarClick
             className="chat-search-input"
             autoFocus
           />
-          {searchQuery && (
-            <span className="search-results-count">
-              {filteredMessages.length} {filteredMessages.length === 1 ? 'result' : 'results'}
-            </span>
-          )}
         </div>
       )}
 
+      {/* MESSAGES */}
       <div className="chat-messages">
-        {filteredMessages.map((message, index) => (
-          <div key={message.id}>
-            {index === 2 && (
-              <div className="new-messages-divider">
-                <span>New Messages</span>
-              </div>
-            )}
-            <div className={`message ${message.sender}`}>
-              {message.sender === 'other' && (
-                <img src={selectedUser?.avatar} alt={selectedUser?.name} className="message-avatar" />
+        {visibleMessages.map(message => {
+          const isMine = message.senderId === currentUserId;
+
+          return (
+            <div key={message.id} className={`message ${isMine ? 'me' : 'other'}`}>
+              {!isMine && (
+                <img
+                  src={fileUrl(message.sender?.avatarUrl)}
+                  alt={message.sender?.firstName}
+                  className="message-avatar"
+                />
               )}
+
               <div className="message-content">
-                <div className="message-bubble">
-                  {message.text}
-                </div>
-                <span className="message-time">{message.time}</span>
+                <div className="message-bubble">{message.content}</div>
+                <span className="message-time">{message.sentAt}</span>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
+      {/* INPUT */}
       <div className="chat-input-wrapper">
         <input
           type="text"
@@ -143,15 +129,13 @@ const ChatMain = ({ selectedUser, messages, showChat, onBackClick, onAvatarClick
           onChange={(e) => setMessageText(e.target.value)}
           onKeyPress={handleKeyPress}
         />
+
         <div className="chat-input-actions">
-          <button className="input-action-button" onClick={handleEmojiPicker}>
-            <Smile size={20} />
-          </button>
-          <button className="input-action-button" onClick={handleAttachment}>
-            <Paperclip size={20} />
-          </button>
+          <button className="input-action-button"><Smile size={20} /></button>
+          <button className="input-action-button"><Paperclip size={20} /></button>
+
           {messageText.trim() && (
-            <button className="input-action-button" onClick={handleSendMessage} style={{ color: '#7c3aed' }}>
+            <button className="input-action-button" onClick={handleSend}>
               <Send size={20} />
             </button>
           )}

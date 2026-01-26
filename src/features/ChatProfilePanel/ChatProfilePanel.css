@@ -1,5 +1,4 @@
 .chat-profile {
-  position: relative;
   background: white;
   border-left: 1px solid #e5e7eb;
   padding: 24px;
@@ -9,22 +8,21 @@
 
 .profile-back-button {
   display: none;
-  position: sticky;
-  top: 0;
-  margin-bottom: 16px;
-
+  position: absolute;
+  top: 20px;
+  left: 20px;
   width: 40px;
   height: 40px;
-  background: #f9fafb;
+  background: white;
   border: 1px solid #e5e7eb;
   border-radius: 50%;
   color: #374151;
   font-size: 20px;
   cursor: pointer;
-
+  transition: all 0.3s;
+  z-index: 10;
   align-items: center;
   justify-content: center;
-  z-index: 10;
 }
 
 .profile-back-button:hover {
@@ -111,34 +109,31 @@
 @media (max-width: 1200px) {
   .chat-profile {
     display: none;
-    background: white;
-    height: 100%;
-    overflow-y: auto;
-    border-left: 1px solid #e5e7eb;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 30;
+    box-shadow: none;
+    transform: translateX(100%);
+    transition: transform 0.3s;
+    padding-top: 80px;
   }
 
   .chat-profile.show-profile {
     display: flex;
     flex-direction: column;
+    transform: translateX(0);
   }
 
   .profile-back-button {
     display: flex;
   }
 }
-
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .chat-profile {
     padding: 16px;
-  }
-
-  .profile-avatar-large img {
-    width: 100px;
-    height: 100px;
-  }
-
-  .profile-name {
-    font-size: 18px;
-    margin-bottom: 16px;
   }
 }
