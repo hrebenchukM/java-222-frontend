@@ -77,6 +77,7 @@ export default function App() {
         name: payload.name,
         dob: payload.dob ?? null,
       });
+            console.log(token);
     } else {
       setUser(null);
       setProfile(null);

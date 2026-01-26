@@ -16,53 +16,87 @@ const GroupPage = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('posts');
   const [postContent, setPostContent] = useState('');
   const { id: groupId } = useParams();
-  const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
   const { request, user, profile } = useContext(AppContext);
-  const [members, setMembers] = useState([]);
-  const [membersLoading, setMembersLoading] = useState(false);
-  const [posts, setPosts] = useState([]);
+const [group, setGroup] = useState(null);
+const [groupLoading, setGroupLoading] = useState(true);
+
+const [posts, setPosts] = useState([]);
+const [postsLoading, setPostsLoading] = useState(false);
+
+const [members, setMembers] = useState([]);
+const [membersLoading, setMembersLoading] = useState(false);
 
   const u = profile?.user;
+useEffect(() => {
+  let cancelled = false;
+  setGroupLoading(true);
 
-  // ✅ useEffect — БЕЗ return выше
+  request(`api://groups/${groupId}`)
+    .then(data => {
+      if (!cancelled) setGroup(data);
+    })
+    .catch(err => {
+      console.error('GROUP LOAD ERROR', err);
+      if (!cancelled) setGroup(null);
+    })
+    .finally(() => {
+      if (!cancelled) setGroupLoading(false);
+    });
+
+  return () => { cancelled = true; };
+}, [groupId]);
+
+ useEffect(() => {
+  if (activeTab !== 'posts') return;
+
+  let cancelled = false;
+  setPostsLoading(true);
+
+  request(`api://groups/${groupId}/posts`)
+    .then(res => {
+      if (!cancelled) {
+        setPosts(Array.isArray(res?.data) ? res.data : []);
+      }
+    })
+    .finally(() => {
+      if (!cancelled) setPostsLoading(false);
+    });
+
+  return () => { cancelled = true; };
+}, [activeTab, groupId]);
+
+
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
+  if (activeTab !== 'members') return;
 
-    request(`api://groups/${groupId}`)
-      .then(data => !cancelled && setGroup(data))
-      .finally(() => !cancelled && setLoading(false));
+  let cancelled = false;
+  setMembersLoading(true);
 
-    return () => cancelled = true;
-  }, [groupId]);
+  request(`api://groups/${groupId}/members`)
+    .then(data => {
+      if (!cancelled) setMembers(data ?? []);
+    })
+    .finally(() => {
+      if (!cancelled) setMembersLoading(false);
+    });
 
-  useEffect(() => {
-    if (activeTab !== 'members') return;
-    setMembersLoading(true);
+  return () => { cancelled = true; };
+}, [activeTab, groupId]);
 
-    request(`api://groups/${groupId}/members`)
-      .then(setMembers)
-      .finally(() => setMembersLoading(false));
-  }, [activeTab, groupId]);
 
-  useEffect(() => {
-    if (activeTab !== 'posts') return;
-    request(`api://groups/${groupId}/posts`).then(setPosts);
-  }, [activeTab, groupId]);
+if (!user || !profile?.user) {
+  return <div className="main-content">Loading profile...</div>;
+}
 
-  // ✅ ТОЛЬКО ТУТ МОЖНО return
-  if (!user || !u) {
-    return <div className="main-content">Loading profile...</div>;
-  }
+if (groupLoading) {
+  return <div className="main-content">Loading group...</div>;
+}
 
-  if (loading) {
-    return <div className="main-content">Loading...</div>;
-  }
+if (!group) {
+  return <div className="main-content">Group not found</div>;
+}
 
-  if (!group) {
-    return <div className="main-content">Group not found</div>;
-  }
   return (
     
       <main className="main-content">
@@ -109,10 +143,13 @@ const GroupPage = ({ onNavigate }) => {
                 <div className="group-rules-card">
                   <h3>Group rules</h3>
                   <ul>
-                    {group.rules.map((rule, index) => (
-                      <li key={index}>{rule}</li>
-                    ))}
+                    {Array.isArray(group.rules) &&
+                      group.rules.map((rule, i) => (
+                        <li key={i}>{rule}</li>
+                      ))}
                   </ul>
+
+
                 </div>
               </aside>
 
